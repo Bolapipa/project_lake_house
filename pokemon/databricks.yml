@@ -1,0 +1,25 @@
+# Databricks asset bundle para o projeto Pokemon
+
+bundle:
+  name: pokemon
+  uuid: 3f7a0110-d30d-4ce1-abf2-0b1e10061cdf
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+      root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - user_name: delacortearthur@gmail.com
+        level: CAN_MANAGE

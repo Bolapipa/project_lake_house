@@ -1,0 +1,19 @@
+# The main pipeline for pokemon
+resources:
+  pipelines:
+    pokemon_pipeline:
+      name: pokemon_etl
+      catalog: bronze_dev
+      schema: ds_pokemon
+
+      tags:
+        environment: ${bundle.target}
+
+      serverless: true
+
+      libraries:
+        - notebook:
+            path: ../src/dlt_pokemon.sql
+
+      configuration:
+        bundle.sourcePath: ${workspace.file_path}/src

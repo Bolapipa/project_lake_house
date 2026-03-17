@@ -1,0 +1,21 @@
+# The main pipeline for carros
+resources:
+  pipelines:
+    carros_pipeline:
+      name: carros_etl
+      catalog: bronze_dev
+      schema: ds_carros
+
+      tags:
+        environment: ${bundle.target}
+
+      serverless: true
+
+      libraries:
+        - notebook:
+            path: ../src/dlt_carros.sql
+        - notebook:
+            path: ../src/dlt_carros_gold.sql
+
+      configuration:
+        bundle.sourcePath: ${workspace.file_path}/src
