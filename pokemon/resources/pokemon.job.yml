@@ -1,0 +1,159 @@
+resources:
+  jobs:
+    pokemon_job:
+      name: pokemon_${bundle.target}
+
+      tags:
+        environment: ${bundle.target}
+
+      schedule:
+        quartz_cron_expression: "0 10 23 * * ?" # Roda todos os dias às 23:10
+        timezone_id: "America/Sao_Paulo"
+        pause_status: UNPAUSED
+
+      parameters:
+        - name: catalog
+          default: "bronze_dev"
+        - name: schema
+          default: "ds_pokemon"
+
+      email_notifications:
+        on_failure:
+          - delacortearthur@gmail.com
+
+      tasks:
+        - task_key: ingest_pokedex
+          notebook_task:
+            notebook_path: ../src/ingest_pokedex.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon
+          depends_on:
+            - task_key: ingest_pokedex
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_abilities
+          depends_on:
+            - task_key: ingest_pokemon
+          notebook_task:
+            notebook_path: ../src/ingest_abilities.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon_genders
+          depends_on:
+            - task_key: ingest_abilities
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon_genders.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon_growth_rates
+          depends_on:
+            - task_key: ingest_pokemon_genders
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon_growth_rates.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon_location_areas
+          depends_on:
+            - task_key: ingest_pokemon_growth_rates
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon_location_areas.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon_natures
+          depends_on:
+            - task_key: ingest_pokemon_location_areas
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon_natures.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_pokemon_pokeathlon_stats
+          depends_on:
+            - task_key: ingest_pokemon_natures
+          notebook_task:
+            notebook_path: ../src/ingest_pokemon_pokeathlon_stats.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_egg_groups
+          depends_on:
+            - task_key: ingest_pokemon_pokeathlon_stats
+          notebook_task:
+            notebook_path: ../src/ingest_egg_groups.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_locations
+          depends_on:
+            - task_key: ingest_egg_groups
+          notebook_task:
+            notebook_path: ../src/ingest_locations.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_items
+          depends_on:
+            - task_key: ingest_locations
+          notebook_task:
+            notebook_path: ../src/ingest_items.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_items_attributes
+          depends_on:
+            - task_key: ingest_items
+          notebook_task:
+            notebook_path: ../src/ingest_items_attributes.py
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: ingest_pokedex
+            - task_key: ingest_pokemon
+            - task_key: ingest_abilities
+            - task_key: ingest_pokemon_genders
+            - task_key: ingest_pokemon_growth_rates
+            - task_key: ingest_pokemon_location_areas
+            - task_key: ingest_pokemon_natures
+            - task_key: ingest_pokemon_pokeathlon_stats
+            - task_key: ingest_egg_groups
+            - task_key: ingest_locations
+            - task_key: ingest_items
+            - task_key: ingest_items_attributes
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.pokemon_pipeline.id}
+          max_retries: 1

@@ -1,0 +1,20 @@
+# The main pipeline for pokemon
+
+resources:
+  pipelines:
+    pokemon_etl:
+      name: pokemon_etl
+      catalog: ${var.catalog}
+      schema: ${var.schema}
+      serverless: true
+      root_path: "../src/pokemon_etl"
+
+      libraries:
+        - glob:
+            include: ../src/pokemon_etl/transformations/**
+
+      environment:
+        dependencies:
+          # We include every dependency defined by pyproject.toml by defining an editable environment
+          # that points to the folder where pyproject.toml is deployed.
+          - --editable ${workspace.file_path}
