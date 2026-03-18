@@ -1,6 +1,6 @@
 # Databricks notebook source
 # DBTITLE 1,Ingestão e controle automático de marcas FIPE
-dbutils.widgets.text("catalog", "bronze_dev")
+dbutils.widgets.text("catalog", "bronze_prod")
 used_catalog = dbutils.widgets.get("catalog")
 
 dbutils.widgets.text("schema", "ds_carros")
