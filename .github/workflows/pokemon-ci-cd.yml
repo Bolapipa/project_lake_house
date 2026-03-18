@@ -86,7 +86,7 @@ jobs:
         run: python -m pip install uv
 
       - name: Deploy bundle pokemon em DEV
-        run: databricks bundle deploy -t dev
+        run: databricks bundle deploy -t dev --auto-approve
 
   deploy-pokemon-prod:
     name: Deploy pokemon PROD
@@ -118,4 +118,4 @@ jobs:
         run: python -m pip install uv
 
       - name: Deploy bundle pokemon em PROD
-        run: databricks bundle deploy -t prod
+        run: databricks bundle deploy -t prod --auto-approve
