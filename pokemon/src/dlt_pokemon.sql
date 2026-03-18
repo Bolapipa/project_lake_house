@@ -1,5 +1,5 @@
 -- Databricks notebook source
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_pokemon.cleaned_item_attributes
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_item_attributes
 (
   id_item_attribute INT COMMENT 'Identificador único para cada item de Pokémon.',
   item_name STRING COMMENT 'Nome do item.'
@@ -21,7 +21,7 @@ FROM bronze_dev.ds_pokemon.raw_item_attributes;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_pokemon.cleaned_items
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_items
 (
   item_id INT COMMENT 'Identificador único para cada item de Pokémon.',
   item_name STRING COMMENT 'Nome do item.'
@@ -43,7 +43,7 @@ FROM bronze_dev.ds_pokemon.raw_items;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_pokemon.cleaned_locations
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_locations
 (
   id_location INT COMMENT 'Identificador único para cada local de Pokémon.',
   location_name STRING COMMENT 'Nome do local.'
@@ -65,7 +65,7 @@ FROM bronze_dev.ds_pokemon.raw_locations;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_abilities
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_abilities
 (
   ability_id INT COMMENT 'Identificador único para cada habilidade de Pokémon.',
   ability_name STRING COMMENT 'Nome da habilidade.'
@@ -87,7 +87,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_abilities;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_egg_groups
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_egg_groups
 (
   id_egg_group INT COMMENT 'Identificador único para cada grupo de ovo de Pokémon.',
   egg_group_name STRING COMMENT 'Nome do grupo de ovo.'
@@ -109,7 +109,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_egg_groups;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_number_dex
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_number_dex
 (
   num_pokedex INT COMMENT 'Número do Pokémon na Pokédex.',
   pokemon_name STRING COMMENT 'Nome do Pokémon.'
@@ -131,7 +131,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_number_dex;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_name
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_name
 (
   id INT COMMENT 'Identificador único para cada Pokémon.',
   pokemon_name STRING COMMENT 'Nome do Pokémon.'
@@ -153,7 +153,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_name;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_genders
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_genders
 (
   id_gender INT COMMENT 'Identificador único para cada gênero de Pokémon.',
   gender_name STRING COMMENT 'Nome do gênero.'
@@ -175,7 +175,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_genders;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_growth_rates
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_growth_rates
 (
   id_growth_rate INT COMMENT 'Identificador único para cada taxa de crescimento de Pokémon.',
   growth_rate_name STRING COMMENT 'Nome da taxa de crescimento.'
@@ -197,7 +197,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_growth_rates;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_location_areas
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_location_areas
 (
   id_location_area INT COMMENT 'Identificador único para cada área de localização de Pokémon.',
   location_area_name STRING COMMENT 'Nome da área de localização.'
@@ -219,7 +219,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_location_areas;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_natures
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_natures
 (
   id_nature INT COMMENT 'Identificador único para cada natureza de Pokémon.',
   nature_name STRING COMMENT 'Nome da natureza.'
@@ -241,7 +241,7 @@ FROM bronze_dev.ds_pokemon.raw_pokemon_natures;
 
 -- COMMAND ----------
 
-CREATE OR REFRESH LIVE TABLE silver_dev.ds_pokemon.cleaned_pokemon_pokeathlon_stats
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_pokeathlon_stats
 (
   id_pokeathlon_stat INT COMMENT 'Identificador único para cada estatística de Pokeathlon.',
   pokeathlon_stat_name STRING COMMENT 'Nome da estatística de Pokeathlon.'

@@ -7,6 +7,11 @@ include:
   - resources/*.yml
   - resources/*/*.yml
 
+variables:
+  environment:
+    description: "Environment name (dev or prod)"
+    default: dev
+
 artifacts:
   python_artifact:
     type: whl
@@ -18,12 +23,16 @@ targets:
     default: true
     workspace:
       host: https://dbc-414ad402-adeb.cloud.databricks.com
+    variables:
+      environment: dev
 
   prod:
     mode: production
     workspace:
       host: https://dbc-414ad402-adeb.cloud.databricks.com
       root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      environment: prod
     permissions:
       - user_name: delacortearthur@gmail.com
         level: CAN_MANAGE

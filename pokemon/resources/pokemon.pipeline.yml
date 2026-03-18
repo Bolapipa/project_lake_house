@@ -3,11 +3,11 @@ resources:
   pipelines:
     pokemon_pipeline:
       name: pokemon_etl
-      catalog: bronze_dev
+      catalog: silver_${var.environment}
       schema: ds_pokemon
 
       tags:
-        environment: ${bundle.target}
+        environment: ${var.environment}
 
       serverless: true
 

@@ -1,6 +1,6 @@
 -- Databricks notebook source
 -- DBTITLE 1,Bronze para Silver: marcas e modelos
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_carros.cleaned_marcas
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_marcas
 (
   id_marca STRING COMMENT 'Identificador único da marca de veículo.',
   nome_marca STRING COMMENT 'Nome limpo e padronizado da marca.'
@@ -23,7 +23,7 @@ FROM bronze_dev.ds_carros.raw_marcas;
 -- COMMAND ----------
 
 -- DBTITLE 1,Bronze para Silver: modelos
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_carros.cleaned_modelos
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_modelos
 (
   id_marca STRING COMMENT 'Identificador único da marca relacionada ao modelo.',
   nome_marca STRING COMMENT 'Nome limpo e padronizado da marca.',
@@ -50,7 +50,7 @@ FROM bronze_dev.ds_carros.raw_modelos;
 -- COMMAND ----------
 
 -- DBTITLE 1,Bronze para Silver: anos de veículos
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_carros.cleaned_anos
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_anos
 (
   id_marca STRING COMMENT 'Identificador único da marca de veículo.',
   nome_marca STRING COMMENT 'Nome limpo e padronizado da marca.',
@@ -81,7 +81,7 @@ FROM bronze_dev.ds_carros.raw_anos;
 -- COMMAND ----------
 
 -- DBTITLE 1,Bronze para Silver: referencias
-CREATE OR REFRESH MATERIALIZED VIEW silver_dev.ds_carros.cleaned_referencias
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_referencias
 (
   id_referencia STRING COMMENT 'Identificador incremental da referência FIPE.',
   ano_mes_referencia STRING COMMENT 'Ano e mês de referência no formato ano_mes, ex: 2026_03.',
@@ -153,7 +153,7 @@ FROM bronze_dev.ds_carros.raw_referencias;
 -- COMMAND ----------
 
 -- DBTITLE 1,etl fipe
-CREATE OR REPLACE MATERIALIZED VIEW silver_dev.ds_carros.cleaned_fipe
+CREATE OR REPLACE MATERIALIZED VIEW cleaned_fipe
 (
   id_referencia STRING COMMENT 'Identificador da referência FIPE utilizada na consulta.',
   id_marca STRING COMMENT 'Identificador da marca do veículo.',

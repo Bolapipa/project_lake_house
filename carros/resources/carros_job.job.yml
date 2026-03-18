@@ -7,15 +7,19 @@ resources:
         environment: ${bundle.target}
 
       schedule:
-        quartz_cron_expression: "0 0 01 * * ?" # Roda todos os dias às 01:00
+        quartz_cron_expression: "0 0 01 * * ?"
         timezone_id: "America/Sao_Paulo"
         pause_status: UNPAUSED
 
       parameters:
+        - name: environment
+          default: "${var.environment}"
+
         - name: catalog
-          default: "bronze_dev"
+          default: "${var.catalog}"
+
         - name: schema
-          default: "ds_carros"
+          default: "${var.schema}"
 
       email_notifications:
         on_failure:
@@ -26,6 +30,7 @@ resources:
           notebook_task:
             notebook_path: ../src/ingest_marcas.py
             base_parameters:
+              environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
@@ -36,6 +41,7 @@ resources:
           notebook_task:
             notebook_path: ../src/ingest_modelos.py
             base_parameters:
+              environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
@@ -46,6 +52,7 @@ resources:
           notebook_task:
             notebook_path: ../src/ingest_anos.py
             base_parameters:
+              environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
@@ -56,6 +63,7 @@ resources:
           notebook_task:
             notebook_path: ../src/ingest_referencias.py
             base_parameters:
+              environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
@@ -66,6 +74,7 @@ resources:
           notebook_task:
             notebook_path: ../src/ingest_fipe.py
             base_parameters:
+              environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
