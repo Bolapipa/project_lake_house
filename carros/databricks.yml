@@ -12,6 +12,14 @@ variables:
     description: "Environment name (dev or prod)"
     default: dev
 
+  catalog:
+    description: "Catalog de destino"
+    default: bronze_dev
+
+  schema:
+    description: "Schema de destino"
+    default: ds_carros
+
 targets:
   dev:
     mode: development
@@ -20,6 +28,8 @@ targets:
       host: https://dbc-414ad402-adeb.cloud.databricks.com
     variables:
       environment: dev
+      catalog: bronze_dev
+      schema: ds_carros
 
   prod:
     mode: production
@@ -28,6 +38,8 @@ targets:
       root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
       environment: prod
+      catalog: bronze_prod
+      schema: ds_carros
     permissions:
       - user_name: delacortearthur@gmail.com
         level: CAN_MANAGE
