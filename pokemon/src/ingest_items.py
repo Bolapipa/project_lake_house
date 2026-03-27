@@ -4,7 +4,7 @@ import requests
 # COMMAND ----------
 
 # Widgets de catálogo e schema (continua igual, só pra reaproveitar depois)
-dbutils.widgets.text("catalog", "bronze_dev")
+dbutils.widgets.text("catalog", "bronze_prod")
 used_catalog = dbutils.widgets.get("catalog")
 
 dbutils.widgets.text("schema", "ds_items")
