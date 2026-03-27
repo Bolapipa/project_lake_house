@@ -1,4 +1,4 @@
-name: CI/CD carros
+name: CI/CD pokemon
 
 on:
   push:
