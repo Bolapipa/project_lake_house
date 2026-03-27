@@ -4,10 +4,10 @@ resources:
       name: pokemon_${bundle.target}
 
       tags:
-        environment: ${var.environment}
+        environment: ${bundle.target}
 
       schedule:
-        quartz_cron_expression: "0 10 23 * * ?"
+        quartz_cron_expression: "0 0 01 * * ?"
         timezone_id: "America/Sao_Paulo"
         pause_status: PAUSED
 
@@ -16,10 +16,10 @@ resources:
           default: "${var.environment}"
 
         - name: catalog
-          default: "bronze_${var.environment}"
+          default: "${var.catalog}"
 
         - name: schema
-          default: "ds_pokemon"
+          default: "${var.schema}"
 
       email_notifications:
         on_failure:
