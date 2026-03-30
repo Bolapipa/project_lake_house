@@ -13,6 +13,14 @@ variables:
     description: "Environment name (dev or prod)"
     default: dev
 
+  catalog:   # corrigido
+    description: "Catalog name"
+    default: bronze_dev
+
+  schema:   # corrigido
+    description: "Schema name"
+    default: ds_pokemon
+
 targets:
   dev:
     mode: development
@@ -21,6 +29,8 @@ targets:
       host: https://dbc-414ad402-adeb.cloud.databricks.com
     variables:
       environment: dev
+      catalog: bronze_dev   # corrigido
+      schema: ds_pokemon   # corrigido
 
   prod:
     mode: production
@@ -29,6 +39,8 @@ targets:
       root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
     variables:
       environment: prod
+      catalog: bronze_prod   # corrigido
+      schema: ds_pokemon   # corrigido
     permissions:
       - user_name: delacortearthur@gmail.com
         level: CAN_MANAGE
