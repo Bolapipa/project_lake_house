@@ -1,25 +1,27 @@
-name: CI/CD pokemon   # corrigido: mantido pokemon
+name: CI/CD pokemon
 
 on:
   push:
     branches:
-      - prod   # corrigido: removido dev
+      - dev
+      - prod
     paths:
-      - 'pokemon/**'   # corrigido: era carros/**
-      - '.github/workflows/pokemon-ci-cd.yml'   # corrigido: era carros-ci-cd.yml
+      - 'pokemon/**'
+      - '.github/workflows/pokemon-ci-cd.yml'
 
   pull_request:
     branches:
-      - prod   # corrigido: removido dev
+      - dev
+      - prod
     paths:
-      - 'pokemon/**'   # corrigido: era carros/**
-      - '.github/workflows/pokemon-ci-cd.yml'   # corrigido: era carros-ci-cd.yml
+      - 'pokemon/**'
+      - '.github/workflows/pokemon-ci-cd.yml'
 
   workflow_dispatch:
 
 jobs:
-  validate-pokemon:   # corrigido: era validate-carros
-    name: Validar bundle pokemon   # corrigido: era carros
+  validate-pokemon:
+    name: Validar bundle pokemon
     runs-on: ubuntu-latest
 
     env:
@@ -28,7 +30,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: pokemon   # corrigido: era carros
+        working-directory: pokemon
 
     steps:
       - name: Checkout código
@@ -48,13 +50,18 @@ jobs:
       - name: Validar autenticação Databricks
         run: databricks current-user me
 
-      - name: Validar bundle pokemon PROD   # corrigido: removida validação dev e trocado carros por pokemon
+      - name: Validar bundle pokemon DEV   # corrigido
+        if: github.ref == 'refs/heads/dev'
+        run: databricks bundle validate -t dev
+
+      - name: Validar bundle pokemon PROD   # corrigido
+        if: github.ref == 'refs/heads/prod'
         run: databricks bundle validate -t prod
 
-  deploy-pokemon-prod:   # corrigido: era deploy-carros-prod
-    name: Deploy pokemon PROD   # corrigido: era carros
+  deploy-pokemon-prod:
+    name: Deploy pokemon PROD
     runs-on: ubuntu-latest
-    needs: validate-pokemon   # corrigido: era validate-carros
+    needs: validate-pokemon
     if: github.ref == 'refs/heads/prod' && github.event_name != 'pull_request'
 
     env:
@@ -63,7 +70,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: pokemon   # corrigido: era carros
+        working-directory: pokemon
 
     steps:
       - name: Checkout código
@@ -80,8 +87,8 @@ jobs:
       - name: Instalar uv
         run: python -m pip install uv
 
-      - name: Deploy bundle pokemon em PROD   # corrigido: era carros
+      - name: Deploy bundle pokemon em PROD
         run: databricks bundle deploy -t prod --auto-approve
 
-      - name: Rodar job pokemon em PROD   # corrigido: era carros
-        run: databricks bundle run -t prod pokemon_job   # corrigido: era carros_job
+      - name: Rodar job pokemon em PROD
+        run: databricks bundle run -t prod pokemon_job

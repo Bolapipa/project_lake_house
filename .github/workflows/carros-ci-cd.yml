@@ -3,14 +3,16 @@ name: CI/CD carros
 on:
   push:
     branches:
-      - prod   # corrigido: removido dev
+      - dev
+      - prod
     paths:
       - 'carros/**'
       - '.github/workflows/carros-ci-cd.yml'
 
   pull_request:
     branches:
-      - prod   # corrigido: removido dev
+      - dev
+      - prod
     paths:
       - 'carros/**'
       - '.github/workflows/carros-ci-cd.yml'
@@ -48,8 +50,13 @@ jobs:
       - name: Validar autenticação Databricks
         run: databricks current-user me
 
-      - name: Validar bundle carros PROD
-        run: databricks bundle validate -t prod   # corrigido: removida validação dev
+      - name: Validar bundle carros DEV   # corrigido
+        if: github.ref == 'refs/heads/dev'
+        run: databricks bundle validate -t dev
+
+      - name: Validar bundle carros PROD   # corrigido
+        if: github.ref == 'refs/heads/prod'
+        run: databricks bundle validate -t prod
 
   deploy-carros-prod:
     name: Deploy carros PROD
@@ -82,3 +89,6 @@ jobs:
 
       - name: Deploy bundle carros em PROD
         run: databricks bundle deploy -t prod --auto-approve
+
+      - name: Rodar job carros em PROD
+        run: databricks bundle run -t prod carros_job
