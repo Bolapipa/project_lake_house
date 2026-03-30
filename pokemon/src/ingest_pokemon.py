@@ -45,6 +45,8 @@ import time
 API_URL = "https://pokeapi.co/api/v2/pokemon/?limit=20"
 all_rows = []
 
+ultimo_id = int(ultimo_id) if ultimo_id is not None else 0  # corrigido
+
 while API_URL:
     response = requests.get(API_URL)
     if response.status_code != 200 or not response.text:
@@ -60,13 +62,14 @@ while API_URL:
 
         pokemon = poke_resp.json()
 
-        # filtro incremental
-        if pokemon.get("id") <= ultimo_id:
+        pokemon_id = int(pokemon.get("id"))  # corrigido
 
+        # filtro incremental
+        if pokemon_id <= ultimo_id:  # corrigido
             continue
 
         row = (
-            pokemon.get("id"),
+            pokemon_id,  # corrigido
             pokemon.get("name")
         )
         all_rows.append(row)
@@ -78,7 +81,7 @@ while API_URL:
 else:
     API_URL = None
 
-# ✅ CHANGE: se não tem dados novos, não cria DF, não grava tabela, não atualiza controle
+# se não tem dados novos, não cria DF, não grava tabela, não atualiza controle
 if len(all_rows) == 0:
     print("Sem dados novos para ingerir. Não vou atualizar tabela nem controle.")
 else:
