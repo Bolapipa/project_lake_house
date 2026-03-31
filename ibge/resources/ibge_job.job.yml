@@ -1,0 +1,58 @@
+resources:
+  jobs:
+    ibge_job:
+      name: ibge_${bundle.target}
+
+      tags:
+        environment: ${bundle.target}
+
+      schedule:
+        quartz_cron_expression: "0 0 22 * * ?"
+        timezone_id: "America/Sao_Paulo"
+        pause_status: ${var.pause_status}
+        
+      parameters:
+        - name: environment
+          default: "${var.environment}"
+
+        - name: catalog
+          default: "${var.catalog}"
+
+        - name: schema
+          default: "${var.schema}"
+
+      email_notifications:
+        on_failure:
+          - delacortearthur@gmail.com
+
+      tasks:
+        - task_key: ingest_marcas
+          notebook_task:
+            notebook_path: ../src/ingest_marcas.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_modelos
+          depends_on:
+            - task_key: ingest_marcas
+          notebook_task:
+            notebook_path: ../src/ingest_modelos.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: ingest_marcas
+            - task_key: ingest_modelos
+            - task_key: ingest_anos
+            - task_key: ingest_referencias
+            - task_key: ingest_fipe
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.carros_pipeline.id}
+          max_retries: 1
