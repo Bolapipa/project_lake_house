@@ -1,0 +1,52 @@
+# This is a Databricks asset bundle definition for carros.
+bundle:
+  name: ibge
+  uuid: decb1c7a-3cc3-4257-aba9-63ed1aa7994f
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+variables:
+  environment:
+    description: "Environment name (dev or prod)"
+    default: dev
+
+  catalog:
+    description: "Catalog de destino"
+    default: bronze_dev
+
+  schema:
+    description: "Schema de destino"
+    default: ds_ibge
+
+  pause_status:
+    description: "Job schedule status"
+    default: PAUSED
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+    variables:
+      environment: dev
+      catalog: bronze_dev
+      schema: ds_ibge
+      pause_status: PAUSED
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+      root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      environment: prod
+      catalog: bronze_prod
+      schema: ds_ibge
+      pause_status: PAUSED 
+
+    permissions:
+      - user_name: delacortearthur@gmail.com
+        level: CAN_MANAGE
