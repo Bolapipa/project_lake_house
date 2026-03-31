@@ -26,20 +26,130 @@ resources:
           - delacortearthur@gmail.com
 
       tasks:
-        - task_key: ingest_marcas
+        - task_key: ingest_regioes
           notebook_task:
-            notebook_path: ../src/ingest_marcas.py
+            notebook_path: ../src/ingest_regioes.py
             base_parameters:
               environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
           max_retries: 1
 
-        - task_key: ingest_modelos
+        - task_key: ingest_estados
           depends_on:
-            - task_key: ingest_marcas
+            - task_key: ingest_regioes
           notebook_task:
-            notebook_path: ../src/ingest_modelos.py
+            notebook_path: ../src/ingest_estados.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_mesorregioes
+          depends_on:
+            - task_key: ingest_estados
+          notebook_task:
+            notebook_path: ../src/ingest_mesorregioes.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_microrregioes
+          depends_on:
+            - task_key: ingest_mesorregioes
+          notebook_task:
+            notebook_path: ../src/ingest_microrregioes.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_regioes_intermediarias
+          depends_on:
+            - task_key: ingest_microrregioes
+          notebook_task:
+            notebook_path: ../src/ingest_regioes_intermediarias.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_regioes_imediatas
+          depends_on:
+            - task_key: ingest_regioes_intermediarias
+          notebook_task:
+            notebook_path: ../src/ingest_regioes_imediatas.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_municipios
+          depends_on:
+            - task_key: ingest_regioes_imediatas
+          notebook_task:
+            notebook_path: ../src/ingest_municipios.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_distritos
+          depends_on:
+            - task_key: ingest_municipios
+          notebook_task:
+            notebook_path: ../src/ingest_distritos.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_subdistritos
+          depends_on:
+            - task_key: ingest_distritos
+          notebook_task:
+            notebook_path: ../src/ingest_subdistritos.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_regioes_metropolitanas
+          depends_on:
+            - task_key: ingest_subdistritos
+          notebook_task:
+            notebook_path: ../src/ingest_regioes_metropolitanas.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_aglomeracoes_urbanas
+          depends_on:
+            - task_key: ingest_regioes_metropolitanas
+          notebook_task:
+            notebook_path: ../src/ingest_aglomeracoes_urbanas.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_regioes_integradas_desenvolvimento
+          depends_on:
+            - task_key: ingest_aglomeracoes_urbanas
+          notebook_task:
+            notebook_path: ../src/ingest_regioes_integradas_desenvolvimento.py
             base_parameters:
               environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
@@ -48,11 +158,18 @@ resources:
 
         - task_key: refresh_pipeline
           depends_on:
-            - task_key: ingest_marcas
-            - task_key: ingest_modelos
-            - task_key: ingest_anos
-            - task_key: ingest_referencias
-            - task_key: ingest_fipe
+            - task_key: ingest_regioes
+            - task_key: ingest_estados
+            - task_key: ingest_mesorregioes
+            - task_key: ingest_microrregioes
+            - task_key: ingest_regioes_intermediarias
+            - task_key: ingest_regioes_imediatas
+            - task_key: ingest_municipios
+            - task_key: ingest_distritos
+            - task_key: ingest_subdistritos
+            - task_key: ingest_regioes_metropolitanas
+            - task_key: ingest_aglomeracoes_urbanas
+            - task_key: ingest_regioes_integradas_desenvolvimento
           pipeline_task:
             pipeline_id: ${resources.pipelines.carros_pipeline.id}
           max_retries: 1
