@@ -1,4 +1,4 @@
-# The main pipeline for carros
+# The main pipeline for ibge
 resources:
   pipelines:
     ibge_pipeline:

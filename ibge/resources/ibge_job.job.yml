@@ -171,5 +171,5 @@ resources:
             - task_key: ingest_aglomeracoes_urbanas
             - task_key: ingest_regioes_integradas_desenvolvimento
           pipeline_task:
-            pipeline_id: ${resources.pipelines.carros_pipeline.id}
+            pipeline_id: ${resources.pipelines.ibge_pipeline.id}
           max_retries: 1
