@@ -7,7 +7,7 @@ resources:
         environment: ${bundle.target}
 
       schedule:
-        quartz_cron_expression: "0 0 01 * * ?"
+        quartz_cron_expression: "0 0 00 * * ?"
         timezone_id: "America/Sao_Paulo"
         pause_status: ${var.pause_status}
 
