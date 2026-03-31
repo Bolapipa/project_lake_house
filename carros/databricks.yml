@@ -20,6 +20,10 @@ variables:
     description: "Schema de destino"
     default: ds_carros
 
+  pause_status:
+    description: "Job schedule status"
+    default: PAUSED
+
 targets:
   dev:
     mode: development
@@ -30,6 +34,7 @@ targets:
       environment: dev
       catalog: bronze_dev
       schema: ds_carros
+      pause_status: PAUSED
 
   prod:
     mode: production
@@ -40,6 +45,8 @@ targets:
       environment: prod
       catalog: bronze_prod
       schema: ds_carros
+      pause_status: UNPAUSED 
+
     permissions:
       - user_name: delacortearthur@gmail.com
         level: CAN_MANAGE
