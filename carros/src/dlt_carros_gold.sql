@@ -27,7 +27,7 @@ SELECT
   cr.ano_mes_referencia,
   cr.mes_referencia,
   cr.ano_referencia
-FROM silver_dev.ds_carros.cleaned_referencias cr;
+FROM ds_carros.cleaned_referencias cr;
 
 -- COMMAND ----------
 
@@ -50,7 +50,7 @@ AS
 SELECT DISTINCT
   cm.id_marca,
   cm.nome_marca
-FROM silver_dev.ds_carros.cleaned_marcas cm;
+FROM ds_carros.cleaned_marcas cm;
 
 -- COMMAND ----------
 
@@ -75,12 +75,12 @@ SELECT DISTINCT
   cmo.id_marca,
   cmo.id_modelo,
   cmo.nome_modelo
-FROM silver_dev.ds_carros.cleaned_modelos cmo;
+FROM ds_carros.cleaned_modelos cmo;
 
 -- COMMAND ----------
 
 -- DBTITLE 1,dim_veiculo
-CREATE OR REFRESH MATERIALIZED VIEW ds_carros.dim_veiculo
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros_gold.dim_veiculo
 (
   sk_veiculo BIGINT COMMENT 'Chave substituta do veículo, gerada a partir da combinação de marca, modelo, ano, combustível e código FIPE.',
   id_marca STRING COMMENT 'Identificador da marca do veículo.',
@@ -120,14 +120,14 @@ SELECT DISTINCT
   cf.combustivel,
   cf.codigo_fipe,
   cf.id_ano
-FROM silver_dev.ds_carros.cleaned_fipe cf
-LEFT JOIN silver_dev.ds_carros.cleaned_marcas cm
+FROM ds_carros.cleaned_fipe cf
+LEFT JOIN ds_carros.cleaned_marcas cm
   ON cf.id_marca = cm.id_marca;
 
 -- COMMAND ----------
 
 -- DBTITLE 1,fact_preco_fipe
-CREATE OR REFRESH MATERIALIZED VIEW ds_carros.fact_preco_fipe
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros_gold.fact_preco_fipe
 (
   sk_veiculo BIGINT COMMENT 'Chave substituta do veículo, utilizada para relacionar a fato com a dimensão de veículos.',
   id_referencia STRING COMMENT 'Identificador da referência FIPE utilizada na cotação do veículo.',
@@ -163,5 +163,5 @@ SELECT
       '.'
     ) AS DECIMAL(12,2)
   ) AS valor_fipe
-FROM silver_dev.ds_carros.cleaned_fipe cf
+FROM ds_carros.cleaned_fipe cf
 WHERE cf.valor IS NOT NULL;
