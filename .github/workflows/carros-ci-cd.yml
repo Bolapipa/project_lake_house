@@ -89,6 +89,3 @@ jobs:
 
       - name: Deploy bundle carros em PROD
         run: databricks bundle deploy -t prod --auto-approve
-
-      - name: Rodar job carros em PROD
-        run: databricks bundle run -t prod carros_job

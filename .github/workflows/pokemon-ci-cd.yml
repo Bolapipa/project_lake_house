@@ -89,6 +89,3 @@ jobs:
 
       - name: Deploy bundle pokemon em PROD
         run: databricks bundle deploy -t prod --auto-approve
-
-      - name: Rodar job pokemon em PROD
-        run: databricks bundle run -t prod pokemon_job
