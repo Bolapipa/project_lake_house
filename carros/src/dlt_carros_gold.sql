@@ -5,7 +5,7 @@
 -- COMMAND ----------
 
 -- DBTITLE 1,dim_referencia
-CREATE OR REFRESH MATERIALIZED VIEW gold_dev.ds_carros.dim_referencia
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros.dim_referencia
 (
   id_referencia STRING COMMENT 'Identificador incremental da referência FIPE.',
   ano_mes_referencia STRING COMMENT 'Ano e mês da referência no formato ano_mes, ex: 2026_03.',
@@ -32,7 +32,7 @@ FROM silver_dev.ds_carros.cleaned_referencias cr;
 -- COMMAND ----------
 
 -- DBTITLE 1,dim_marca
-CREATE OR REFRESH MATERIALIZED VIEW gold_dev.ds_carros.dim_marca
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros.dim_marca
 (
   id_marca STRING COMMENT 'Identificador da marca do veículo.',
   nome_marca STRING COMMENT 'Nome da marca do veículo, como Fiat, Volkswagen, Chevrolet e outras.',
@@ -55,7 +55,7 @@ FROM silver_dev.ds_carros.cleaned_marcas cm;
 -- COMMAND ----------
 
 -- DBTITLE 1,dim_modelo
-CREATE OR REFRESH MATERIALIZED VIEW gold_dev.ds_carros.dim_modelo
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros.dim_modelo
 (
   id_marca STRING COMMENT 'Identificador da marca à qual o modelo pertence.',
   id_modelo STRING COMMENT 'Identificador do modelo do veículo.',
@@ -80,7 +80,7 @@ FROM silver_dev.ds_carros.cleaned_modelos cmo;
 -- COMMAND ----------
 
 -- DBTITLE 1,dim_veiculo
-CREATE OR REFRESH MATERIALIZED VIEW gold_dev.ds_carros.dim_veiculo
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros.dim_veiculo
 (
   sk_veiculo BIGINT COMMENT 'Chave substituta do veículo, gerada a partir da combinação de marca, modelo, ano, combustível e código FIPE.',
   id_marca STRING COMMENT 'Identificador da marca do veículo.',
@@ -127,7 +127,7 @@ LEFT JOIN silver_dev.ds_carros.cleaned_marcas cm
 -- COMMAND ----------
 
 -- DBTITLE 1,fact_preco_fipe
-CREATE OR REFRESH MATERIALIZED VIEW gold_dev.ds_carros.fact_preco_fipe
+CREATE OR REFRESH MATERIALIZED VIEW ds_carros.fact_preco_fipe
 (
   sk_veiculo BIGINT COMMENT 'Chave substituta do veículo, utilizada para relacionar a fato com a dimensão de veículos.',
   id_referencia STRING COMMENT 'Identificador da referência FIPE utilizada na cotação do veículo.',

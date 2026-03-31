@@ -9,7 +9,8 @@ resources:
       schedule:
         quartz_cron_expression: "0 0 01 * * ?"
         timezone_id: "America/Sao_Paulo"
-
+        pause_status: ${var.pause_status}
+        
       parameters:
         - name: environment
           default: "${var.environment}"
