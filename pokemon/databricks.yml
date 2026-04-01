@@ -1,123 +1,51 @@
-name: CI/CD pokemon
+bundle:
+  name: pokemon
 
-on:
-  push:
-    branches:
-      - dev
-      - prod
-    paths:
-      - 'pokemon/**'
-      - '.github/workflows/pokemon-ci-cd.yml'
+include:
+  - resources/*.yml
+  - resources/*/*.yml
 
-  pull_request:
-    branches:
-      - dev
-      - prod
-    paths:
-      - 'pokemon/**'
-      - '.github/workflows/pokemon-ci-cd.yml'
+variables:
+  environment:
+    description: "Environment name (dev or prod)"
+    default: dev
 
-  workflow_dispatch:
+  catalog:
+    description: "Catalog de destino"
+    default: bronze_dev
 
-jobs:
-  validate-pokemon:
-    name: Validar bundle pokemon
-    runs-on: ubuntu-latest
+  schema:
+    description: "Schema de destino"
+    default: ds_pokemon
 
-    env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+  pause_status:
+    description: "Job schedule status"
+    default: PAUSED
 
-    defaults:
-      run:
-        working-directory: pokemon
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+      root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      environment: dev
+      catalog: bronze_dev
+      schema: ds_pokemon
+      pause_status: PAUSED
 
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-414ad402-adeb.cloud.databricks.com
+      root_path: /Workspace/Users/delacortearthur@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      environment: prod
+      catalog: bronze_prod
+      schema: ds_pokemon
+      pause_status: PAUSED
 
-      - name: Instalar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
-
-      - name: Instalar uv
-        run: python -m pip install uv
-
-      - name: Validar autenticação Databricks
-        run: databricks current-user me
-
-      - name: Validar bundle pokemon DEV
-        if: github.ref == 'refs/heads/dev'
-        run: databricks bundle validate -t dev
-
-      - name: Validar bundle pokemon PROD
-        if: github.ref == 'refs/heads/prod'
-        run: databricks bundle validate -t prod
-
-  deploy-pokemon-dev:
-    name: Deploy pokemon DEV
-    runs-on: ubuntu-latest
-    needs: validate-pokemon
-    if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
-
-    env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-
-    defaults:
-      run:
-        working-directory: pokemon
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Instalar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
-
-      - name: Instalar uv
-        run: python -m pip install uv
-
-      - name: Deploy bundle pokemon em DEV
-        run: databricks bundle deploy -t dev --auto-approve
-
-  deploy-pokemon-prod:
-    name: Deploy pokemon PROD
-    runs-on: ubuntu-latest
-    needs: validate-pokemon
-    if: github.ref == 'refs/heads/prod' && github.event_name != 'pull_request'
-
-    env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-
-    defaults:
-      run:
-        working-directory: pokemon
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Instalar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
-
-      - name: Instalar uv
-        run: python -m pip install uv
-
-      - name: Deploy bundle pokemon em PROD
-        run: databricks bundle deploy -t prod --auto-approve
+    permissions:
+      - user_name: delacortearthur@gmail.com
+        level: CAN_MANAGE
