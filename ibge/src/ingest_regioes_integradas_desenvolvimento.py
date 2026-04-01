@@ -17,7 +17,7 @@ import requests
 import json
 
 # Endpoint oficial de regiões integradas de desenvolvimento
-url = "https://servicodados.ibge.gov.br/api/v1/localidades/regioes-integradas-desenvolvimento"
+url = "https://servicodados.ibge.gov.br/api/v1/localidades/regioes-integradas-de-desenvolvimento"
 
 # Faz a chamada da API
 response = requests.get(url, timeout=120)
