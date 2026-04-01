@@ -1,8 +1,5 @@
-# Databricks asset bundle para o projeto Pokemon
-
 bundle:
   name: pokemon
-  uuid: 3f7a0110-d30d-4ce1-abf2-0b1e10061cdf
 
 include:
   - resources/*.yml
@@ -14,11 +11,11 @@ variables:
     default: dev
 
   catalog:
-    description: "Catalog name"
+    description: "Catalog de destino"
     default: bronze_dev
 
   schema:
-    description: "Schema name"
+    description: "Schema de destino"
     default: ds_pokemon
 
   pause_status:
@@ -46,7 +43,8 @@ targets:
     variables:
       environment: prod
       catalog: bronze_prod
-      pause_status: UNPAUSED 
+      schema: ds_pokemon
+      pause_status: PAUSED
 
     permissions:
       - user_name: delacortearthur@gmail.com
