@@ -44,7 +44,7 @@ targets:
       environment: prod
       catalog: bronze_prod
       schema: ds_pokemon
-      pause_status: PAUSED
+      pause_status: UNPAUSED
 
     permissions:
       - user_name: delacortearthur@gmail.com
