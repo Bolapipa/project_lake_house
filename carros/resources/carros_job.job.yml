@@ -79,7 +79,7 @@ resources:
               schema: "{{job.parameters.schema}}"
           max_retries: 1
 
-        - task_key: refresh_pipeline
+        - task_key: refresh_pipeline_silver
           depends_on:
             - task_key: ingest_marcas
             - task_key: ingest_modelos
@@ -87,5 +87,12 @@ resources:
             - task_key: ingest_referencias
             - task_key: ingest_fipe
           pipeline_task:
-            pipeline_id: ${resources.pipelines.carros_pipeline.id}
+            pipeline_id: ${resources.pipelines.carros_pipeline_silver.id}
+          max_retries: 1
+
+        - task_key: refresh_pipeline_gold
+          depends_on:
+            - task_key: refresh_pipeline_silver
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.carros_pipeline_gold.id}
           max_retries: 1
