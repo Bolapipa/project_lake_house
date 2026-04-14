@@ -260,3 +260,32 @@ SELECT
   CAST(id_pokeathlon_stat AS INT) AS id_pokeathlon_stat,
   CAST(name AS STRING) AS pokeathlon_stat_name
 FROM bronze_dev.ds_pokemon.raw_pokemon_pokeathlon_stats;
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ## Tabela Silver: Versions
+
+-- COMMAND ----------
+
+CREATE OR REFRESH LIVE TABLE cleaned_pokemon_versions
+(
+  id_version INT COMMENT 'Identificador único para cada versão de jogo Pokémon.',
+  version_name STRING COMMENT 'Nome da versão do jogo (ex: red, blue, sword, scarlet).',
+  version_group STRING COMMENT 'Grupo da versão (ex: red-blue, sword-shield, scarlet-violet).'
+)
+COMMENT "Tabela de versões de jogos Pokémon limpas, padronizada para análises e relatórios."
+TBLPROPERTIES(
+  delta.autoOptimize.optimizeWrite = true,
+  delta.autoOptimize.autoCompact = true,
+  pipeline.autoOptimize.managed = true,
+  delta.enableRowTracking = true,
+  quality = 'silver'
+)
+CLUSTER BY AUTO
+AS
+SELECT
+  CAST(id AS INT) AS id_version,
+  CAST(name AS STRING) AS version_name,
+  CAST(version_group AS STRING) AS version_group
+FROM bronze_dev.ds_pokemon.raw_pokemon_versions;
