@@ -1,0 +1,80 @@
+resources:
+  jobs:
+    camara_deputados_job:
+      name: camara_deputados_${bundle.target}
+
+      tags:
+        environment: ${bundle.target}
+
+      schedule:
+        quartz_cron_expression: "0 0 06 * * ?"
+        timezone_id: "America/Sao_Paulo"
+        pause_status: ${var.pause_status}
+
+      parameters:
+        - name: environment
+          default: "${var.environment}"
+
+        - name: catalog
+          default: "${var.catalog}"
+
+        - name: schema
+          default: "${var.schema}"
+
+      email_notifications:
+        on_failure:
+          - delacortearthur@gmail.com
+
+      tasks:
+        # Ingestão de Deputados - Base para outras ingestões
+        - task_key: ingest_deputados
+          notebook_task:
+            notebook_path: ../src/ingest_deputados.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        # Ingestão de Partidos - Dimensão independente
+        - task_key: ingest_partidos
+          notebook_task:
+            notebook_path: ../src/ingest_partidos.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        # Ingestão de Despesas - Depende de ter lista de deputados
+        - task_key: ingest_despesas
+          depends_on:
+            - task_key: ingest_deputados
+          notebook_task:
+            notebook_path: ../src/ingest_despesas.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        # Ingestão de Votações - Independente
+        - task_key: ingest_votacoes
+          notebook_task:
+            notebook_path: ../src/ingest_votacoes.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        # Refresh do Pipeline DLT - Depende de todas as ingestões
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: ingest_deputados
+            - task_key: ingest_partidos
+            - task_key: ingest_despesas
+            - task_key: ingest_votacoes
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.camara_deputados_pipeline.id}
+          max_retries: 1
