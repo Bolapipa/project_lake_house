@@ -5,15 +5,6 @@ used_catalog = dbutils.widgets.get("catalog")
 dbutils.widgets.text("schema", "ds_open_meteo")
 used_schema = dbutils.widgets.get("schema")
 
-dbutils.widgets.text("origem_execucao", "databricks_manual")
-origem_execucao = dbutils.widgets.get("origem_execucao")
-
-dbutils.widgets.text("airflow_dag_id", "")
-airflow_dag_id = dbutils.widgets.get("airflow_dag_id")
-
-dbutils.widgets.text("airflow_run_id", "")
-airflow_run_id = dbutils.widgets.get("airflow_run_id")
-
 tabela_destino = f"{used_catalog}.{used_schema}.raw_daily_forecast"
 tabela_controle = f"{used_catalog}.{used_schema}.tabela_controle"
 tabela_localidades = f"{used_catalog}.{used_schema}.auxiliar_localidades"
@@ -24,7 +15,7 @@ from datetime import datetime
 from delta.tables import DeltaTable
 from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 
-# Lê as localidades auxiliares
+# Le as localidades auxiliares
 localidades = spark.table(tabela_localidades).collect()
 
 # Coleta os dados da API
@@ -119,10 +110,7 @@ schema_controle = StructType([
     StructField("processo", StringType(), True),
     StructField("ultima_execucao", TimestampType(), True),
     StructField("ultima_data_previsao", StringType(), True),
-    StructField("qtd_registros", StringType(), True),
-    StructField("origem_execucao", StringType(), True),
-    StructField("airflow_dag_id", StringType(), True),
-    StructField("airflow_run_id", StringType(), True)
+    StructField("qtd_registros", StringType(), True)
 ])
 
 dados_controle = [
@@ -130,10 +118,7 @@ dados_controle = [
         "open_meteo_daily_forecast",
         data_atual,
         str(ultima_data_previsao),
-        str(qtd_registros),
-        origem_execucao,
-        airflow_dag_id if airflow_dag_id else None,
-        airflow_run_id if airflow_run_id else None
+        str(qtd_registros)
     )
 ]
 
