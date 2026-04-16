@@ -18,14 +18,13 @@ variables:
     description: "Schema de destino"
     default: ds_open_meteo
 
+  silver_catalog:
+    description: "Catalog de destino da silver"
+    default: silver_dev
+
   pause_status:
     description: "Job schedule status"
     default: PAUSED
-
-artifacts:
-  python_artifact:
-    type: whl
-    build: uv build --wheel
 
 targets:
   dev:
@@ -38,6 +37,7 @@ targets:
       environment: dev
       catalog: bronze_dev
       schema: ds_open_meteo
+      silver_catalog: silver_dev
       pause_status: PAUSED
 
   prod:
@@ -49,6 +49,7 @@ targets:
       environment: prod
       catalog: bronze_prod
       schema: ds_open_meteo
+      silver_catalog: silver_prod
       pause_status: PAUSED
 
     permissions:
