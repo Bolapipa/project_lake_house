@@ -5,6 +5,15 @@ used_catalog = dbutils.widgets.get("catalog")
 dbutils.widgets.text("schema", "ds_open_meteo")
 used_schema = dbutils.widgets.get("schema")
 
+dbutils.widgets.text("origem_execucao", "databricks_manual")
+origem_execucao = dbutils.widgets.get("origem_execucao")
+
+dbutils.widgets.text("airflow_dag_id", "")
+airflow_dag_id = dbutils.widgets.get("airflow_dag_id")
+
+dbutils.widgets.text("airflow_run_id", "")
+airflow_run_id = dbutils.widgets.get("airflow_run_id")
+
 tabela_destino = f"{used_catalog}.{used_schema}.raw_daily_forecast"
 tabela_controle = f"{used_catalog}.{used_schema}.tabela_controle"
 tabela_localidades = f"{used_catalog}.{used_schema}.auxiliar_localidades"
@@ -13,6 +22,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from delta.tables import DeltaTable
+from pyspark.sql.types import StructType, StructField, StringType, TimestampType
 
 # Lê as localidades auxiliares
 localidades = spark.table(tabela_localidades).collect()
@@ -63,7 +73,7 @@ for localidade in localidades:
 if not dados_finais:
     raise ValueError("A API retornou dados vazios.")
 
-# Cria o DataFrame novo
+# Cria o DataFrame da bronze
 df_pandas = pd.DataFrame(dados_finais)
 df_spark_novo = spark.createDataFrame(df_pandas).dropDuplicates(["latitude", "longitude", "time"])
 
@@ -100,20 +110,36 @@ else:
 
     print(f"Carga incremental realizada com merge em: {tabela_destino}")
 
-# Atualiza a tabela de controle
+# Monta o DataFrame da tabela de controle
 data_atual = datetime.now()
 ultima_data_previsao = df_pandas["time"].max()
 qtd_registros = len(df_pandas)
 
-controle_df = spark.createDataFrame([
-    {
-        "processo": "open_meteo_daily_forecast",
-        "ultima_execucao": data_atual,
-        "ultima_data_previsao": str(ultima_data_previsao),
-        "qtd_registros": str(qtd_registros)
-    }
+schema_controle = StructType([
+    StructField("processo", StringType(), True),
+    StructField("ultima_execucao", TimestampType(), True),
+    StructField("ultima_data_previsao", StringType(), True),
+    StructField("qtd_registros", StringType(), True),
+    StructField("origem_execucao", StringType(), True),
+    StructField("airflow_dag_id", StringType(), True),
+    StructField("airflow_run_id", StringType(), True)
 ])
 
+dados_controle = [
+    (
+        "open_meteo_daily_forecast",
+        data_atual,
+        str(ultima_data_previsao),
+        str(qtd_registros),
+        origem_execucao,
+        airflow_dag_id if airflow_dag_id else None,
+        airflow_run_id if airflow_run_id else None
+    )
+]
+
+controle_df = spark.createDataFrame(dados_controle, schema=schema_controle)
+
+# Atualiza a tabela de controle
 if not spark.catalog.tableExists(tabela_controle):
     controle_df.write.format("delta") \
         .mode("overwrite") \
@@ -126,4 +152,3 @@ else:
         .saveAsTable(tabela_controle)
 
 print("Controle de ingestao atualizado com sucesso.")
-
