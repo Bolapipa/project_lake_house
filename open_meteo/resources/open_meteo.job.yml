@@ -23,7 +23,7 @@ resources:
       tasks:
         - task_key: notebook_task
           notebook_task:
-            notebook_path: ../src/ingest_daily_forecast
+            notebook_path: ../src/ingest_daily_forecast.py
             base_parameters:
               environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
