@@ -1,0 +1,23 @@
+resources:
+  pipelines:
+    open_meteo_etl:
+      name: open_meteo_etl_${bundle.target}
+      catalog: ${var.silver_catalog}
+      schema: ds_open_meteo
+
+      tags:
+        environment: ${var.environment}
+
+      serverless: true
+      root_path: ../src/open_meteo_etl
+
+      libraries:
+        - glob:
+            include: ../src/open_meteo_etl/transformations/**
+
+      environment:
+        dependencies:
+          - --editable ${workspace.file_path}
+
+      configuration:
+        bundle.sourcePath: ${workspace.file_path}/src
