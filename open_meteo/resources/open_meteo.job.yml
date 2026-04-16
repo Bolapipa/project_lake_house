@@ -1,0 +1,31 @@
+resources:
+  jobs:
+    open_meteo_job:
+      name: open_meteo_${bundle.target}
+
+      tags:
+        environment: ${bundle.target}
+
+      parameters:
+        - name: environment
+          default: "${var.environment}"
+
+        - name: catalog
+          default: "${var.catalog}"
+
+        - name: schema
+          default: "${var.schema}"
+
+      email_notifications:
+        on_failure:
+          - delacortearthur@gmail.com
+
+      tasks:
+        - task_key: notebook_task
+          notebook_task:
+            notebook_path: ../src/ingest_daily_forecast.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
