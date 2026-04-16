@@ -9,8 +9,10 @@ resources:
       parameters:
         - name: environment
           default: "${var.environment}"
+
         - name: catalog
           default: "${var.catalog}"
+
         - name: schema
           default: "${var.schema}"
 
@@ -21,7 +23,7 @@ resources:
       tasks:
         - task_key: notebook_task
           notebook_task:
-            notebook_path: ../src/open_meteo_bronze.ipynb
+            notebook_path: ../src/ingest_daily_forecast
             base_parameters:
               environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
