@@ -55,7 +55,7 @@ API_URL = "https://dadosabertos.camara.leg.br/api/v2/partidos?itens=100&ordem=AS
 all_rows = []
 
 print("Iniciando ingestão de partidos...")
-response = requests.get(API_URL)
+response = requests.get(API_URL, timeout=10)
 
 if response.status_code == 200:
     dados = response.json()
