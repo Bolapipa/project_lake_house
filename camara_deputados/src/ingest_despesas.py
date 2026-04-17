@@ -124,18 +124,18 @@ for deputado_id in lista_deputados:
                         despesa.get("tipoDespesa"),                   # tipo_despesa
                         despesa.get("codDocumento"),                  # cod_documento
                         despesa.get("tipoDocumento"),                 # tipo_documento
-                        despesa.get("codTipoDocumento"),              # cod_tipo_documento
+                        despesa.get("codTipoDocumento") or 0,         # cod_tipo_documento
                         despesa.get("dataDocumento"),                 # data_documento
                         despesa.get("numDocumento"),                  # num_documento
-                        float(despesa.get("valorDocumento", 0)),      # valor_documento
+                        despesa.get("valorDocumento") or 0.0,         # valor_documento
                         despesa.get("urlDocumento"),                  # url_documento
                         despesa.get("nomeFornecedor"),                # nome_fornecedor
                         despesa.get("cnpjCpfFornecedor"),             # cnpj_cpf_fornecedor
-                        float(despesa.get("valorLiquido", 0)),        # valor_liquido
-                        float(despesa.get("valorGlosa", 0)),          # valor_glosa
+                        despesa.get("valorLiquido") or 0.0,           # valor_liquido
+                        despesa.get("valorGlosa") or 0.0,             # valor_glosa
                         despesa.get("numRessarcimento"),              # num_ressarcimento
-                        despesa.get("codLote"),                       # cod_lote
-                        despesa.get("parcela")                        # parcela
+                        despesa.get("codLote") or 0,                  # cod_lote
+                        despesa.get("parcela") or 0                   # parcela
                     )
                     all_rows.append(row)
             
@@ -156,7 +156,7 @@ for deputado_id in lista_deputados:
                 print(f"Exceção para deputado {deputado_id}, {ano}-{mes:02d}: {str(e)}")
             continue
 
-print(f"\n✓ Ingestão concluída!")
+print(f"\nIngestão concluída!")
 print(f"Total de despesas coletadas: {len(all_rows)}")
 print(f"Total de erros: {erros}")
 
@@ -194,7 +194,7 @@ if all_rows:
     display(df_despesas.limit(100))
     
     # Salvar na tabela Bronze
-    df_despesas.write.mode("append").saveAsTable(tabela_destino)
+    df_despesas.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
     
     # Atualizar tabela de controle com a data de hoje
     nova_data = datetime.now().strftime("%Y-%m-%d")
@@ -205,12 +205,12 @@ if all_rows:
         WHERE id = 1
     """)
     
-    print(f"\n✓ Dados gravados com sucesso!")
-    print(f"✓ Última data atualizada: {nova_data}")
-    print(f"✓ Total de despesas inseridas: {len(all_rows)}")
+    print(f"\nDados gravados com sucesso!")
+    print(f"Ultima data atualizada: {nova_data}")
+    print(f"Total de despesas inseridas: {len(all_rows)}")
     
     # Estatísticas
-    print("\n📊 Estatísticas:")
+    print("\nEstatísticas:")
     df_despesas.groupBy("tipo_despesa").count().orderBy("count", ascending=False).show(20, truncate=False)
     
 else:

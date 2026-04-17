@@ -101,7 +101,7 @@ if all_rows:
     
     display(df_deputados)
     
-    df_deputados.write.mode("append").saveAsTable(tabela_destino)
+    df_deputados.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
     
     novo_ultimo_id = all_rows[-1][0]
     

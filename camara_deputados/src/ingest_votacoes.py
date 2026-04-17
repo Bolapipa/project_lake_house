@@ -124,16 +124,16 @@ while pagina <= total_paginas:
                     try:
                         partes = proposicao.split()
                         prop_cod_tipo = partes[0] if len(partes) > 0 else None
-                        prop_numero = int(partes[1]) if len(partes) > 1 else None
-                        prop_ano = int(partes[2].replace("/", "")) if len(partes) > 2 else None
+                        prop_numero = int(partes[1]) if len(partes) > 1 else 0
+                        prop_ano = int(partes[2].replace("/", "")) if len(partes) > 2 else 0
                     except:
                         prop_cod_tipo = None
-                        prop_numero = None
-                        prop_ano = None
+                        prop_numero = 0
+                        prop_ano = 0
                 else:
                     prop_cod_tipo = None
-                    prop_numero = None
-                    prop_ano = None
+                    prop_numero = 0
+                    prop_ano = 0
                 
                 # Extrair dados relevantes
                 row = (
@@ -148,7 +148,7 @@ while pagina <= total_paginas:
                     prop_numero,                               # proposicao_numero
                     prop_ano,                                  # proposicao_ano
                     proposicao_uri,                            # uri_proposicao_votada
-                    votacao.get("aprovacao"),                  # aprovacao (int: 1=aprovado, 0=rejeitado)
+                    votacao.get("aprovacao") or 0,             # aprovacao (int: 1=aprovado, 0=rejeitado)
                     votacao.get("descricao")                   # objeto_votacao
                 )
                 all_rows.append(row)
@@ -158,15 +158,16 @@ while pagina <= total_paginas:
             time.sleep(0.2)  # Rate limiting
             
         else:
-            print(f"Erro ao acessar API na página {pagina}: {response.status_code}")
+            print(f"Erro HTTP {response.status_code} na página {pagina}")
             break
             
     except Exception as e:
-        print(f"Exceção na página {pagina}: {str(e)}")
+        print(f"Erro ao processar página {pagina}: {str(e)}")
         break
 
-print(f"\n✓ Ingestão concluída!")
+print(f"\nIngestão concluída!")
 print(f"Total de votações coletadas: {len(all_rows)}")
+print(f"Total de páginas processadas: {pagina - 1}")
 
 # COMMAND ----------
 
@@ -197,7 +198,7 @@ if all_rows:
     display(df_votacoes)
     
     # Salvar na tabela Bronze
-    df_votacoes.write.mode("append").saveAsTable(tabela_destino)
+    df_votacoes.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
     
     # Atualizar tabela de controle com a data/hora mais recente
     # Buscar a última data/hora das votações coletadas
@@ -215,12 +216,12 @@ if all_rows:
         WHERE id = 1
     """)
     
-    print(f"\n✓ Dados gravados com sucesso!")
-    print(f"✓ Última data/hora atualizada: {nova_data_hora}")
-    print(f"✓ Total de votações inseridas: {len(all_rows)}")
+    print(f"\nDados gravados com sucesso!")
+    print(f"Ultima data/hora atualizada: {nova_data_hora}")
+    print(f"Total de votações inseridas: {len(all_rows)}")
     
     # Estatísticas
-    print("\n📊 Estatísticas:")
+    print("\nEstatísticas:")
     print(f"Votações aprovadas: {sum(1 for r in all_rows if r[11] == 1)}")
     print(f"Votações rejeitadas: {sum(1 for r in all_rows if r[11] == 0)}")
     df_votacoes.groupBy("sigla_orgao").count().orderBy("count", ascending=False).show(10)
