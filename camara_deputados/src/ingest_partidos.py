@@ -102,7 +102,7 @@ if all_rows:
     display(df_partidos)
     
     # Salvar na tabela Bronze
-    df_partidos.write.mode("append").saveAsTable(tabela_destino)
+    df_partidos.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
     
     # Atualizar tabela de controle com o último ID processado
     novo_ultimo_id = all_rows[-1][0]
@@ -113,8 +113,8 @@ if all_rows:
         WHERE id = 1
     """)
     
-    print(f"✓ Ingestão concluída com sucesso!")
-    print(f"✓ Último ID atualizado: {novo_ultimo_id}")
-    print(f"✓ Total de partidos inseridos: {len(all_rows)}")
+    print(f"Ingestão concluída com sucesso!")
+    print(f"Ultimo ID atualizado: {novo_ultimo_id}")
+    print(f"Total de partidos inseridos: {len(all_rows)}")
 else:
     print("Nenhum novo partido para inserir.")
