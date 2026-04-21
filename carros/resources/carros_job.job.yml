@@ -89,10 +89,3 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.carros_pipeline_silver.id}
           max_retries: 1
-
-        - task_key: refresh_pipeline_gold
-          depends_on:
-            - task_key: refresh_pipeline_silver
-          pipeline_task:
-            pipeline_id: ${resources.pipelines.carros_pipeline_gold.id}
-          max_retries: 1

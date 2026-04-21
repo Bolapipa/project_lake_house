@@ -1,6 +1,6 @@
 resources:
   pipelines:
-    carros_pipeline:
+    carros_pipeline_silver:
       name: 'Carros ETL Pipeline'
       catalog: ${var.silver_catalog}
       schema: ${var.schema}
