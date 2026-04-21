@@ -229,11 +229,18 @@ if all_rows:
     print("\nPreview das votações coletadas:")
     display(df_votacoes)
 
-    # Salvar na tabela Bronze com overwriteSchema para garantir compatibilidade
-    df_votacoes.write \
-        .mode("append") \
-        .option("overwriteSchema", "true") \
-        .saveAsTable(tabela_destino)
+    # Verificar se a tabela existe
+    tabela_existe = spark.catalog.tableExists(tabela_destino)
+    
+    if not tabela_existe:
+        # Primeira execução: cria tabela com schema STRING fixo
+        print(f"Criando tabela {tabela_destino} com schema STRING...")
+        df_votacoes.write.mode("overwrite").saveAsTable(tabela_destino)
+        print("Tabela criada com sucesso!")
+    else:
+        # Execuções seguintes: apenas append (sem modificar schema)
+        print(f"Inserindo dados na tabela existente {tabela_destino}...")
+        df_votacoes.write.mode("append").saveAsTable(tabela_destino)
 
     # Atualizar tabela de controle com a data/hora mais recente
     votacoes_ordenadas = sorted(all_rows, key=lambda x: x[2] if x[2] else "", reverse=True)
