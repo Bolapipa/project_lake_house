@@ -1,9 +1,10 @@
 resources:
   pipelines:
-    open_meteo_silver:
-      name: 'Open Meteo Silver Pipeline'
+    open_meteo_pipeline:
+      name: 'Open Meteo ETL Pipeline'
       catalog: ${var.silver_catalog}
       target: ${var.schema}
+      schema: ${var.schema}
       
       libraries:
         - notebook:
@@ -17,7 +18,6 @@ resources:
       continuous: false
       development: ${var.pipeline_development}
       photon: true
-      
       channel: current
       
       permissions:
