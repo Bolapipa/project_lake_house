@@ -229,7 +229,7 @@ if all_rows:
     display(df_votacoes)
 
     # Salvar na tabela Bronze
-    df_votacoes.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
+    df_votacoes.write.mode("append").saveAsTable(tabela_destino)
 
     # Atualizar tabela de controle com a data/hora mais recente
     votacoes_ordenadas = sorted(all_rows, key=lambda x: x[2] if x[2] else "", reverse=True)
