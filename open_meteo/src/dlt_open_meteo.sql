@@ -46,7 +46,7 @@ SELECT
   CAST(european_aqi AS INT) AS european_aqi,
   CAST(us_aqi AS INT) AS us_aqi,
   CAST(uv_index AS DOUBLE) AS uv_index
-FROM bronze_dev.ds_open_meteo.raw_air_quality;
+FROM ${source_catalog}.${source_schema}.raw_air_quality;
 
 -- COMMAND ----------
 
@@ -91,7 +91,7 @@ SELECT
   CAST(precipitation_sum AS DOUBLE) AS precipitation_sum,
   CAST(wind_speed_10m_max AS DOUBLE) AS wind_speed_10m_max,
   CAST(weather_code AS INT) AS weather_code
-FROM bronze_dev.ds_open_meteo.raw_historical_weather;
+FROM ${source_catalog}.${source_schema}.raw_historical_weather;
 
 -- COMMAND ----------
 
@@ -142,7 +142,7 @@ SELECT
   CAST(sunrise AS TIMESTAMP) AS sunrise,
   CAST(sunset AS TIMESTAMP) AS sunset,
   CAST(generationtime_ms AS DOUBLE) AS generationtime_ms
-FROM bronze_dev.ds_open_meteo.raw_daily_forecast;
+FROM ${source_catalog}.${source_schema}.raw_daily_forecast;
 
 -- COMMAND ----------
 
@@ -169,4 +169,57 @@ SELECT
   upper(trim(uf)) AS uf,
   CAST(latitude AS DOUBLE) AS latitude,
   CAST(longitude AS DOUBLE) AS longitude
-FROM bronze_dev.ds_open_meteo.auxiliar_localidades;
+FROM ${source_catalog}.${source_schema}.auxiliar_localidades;
+
+-- COMMAND ----------
+
+-- DBTITLE 1,cleaned_geocoding_localidades
+CREATE OR REFRESH MATERIALIZED VIEW cleaned_geocoding_localidades
+(
+  id BIGINT COMMENT 'ID único do geocoding.',
+  capital STRING COMMENT 'Nome da capital consultada.',
+  uf STRING COMMENT 'Sigla da unidade federativa (estado).',
+  name STRING COMMENT 'Nome oficial da localidade.',
+  latitude DOUBLE COMMENT 'Latitude da localização.',
+  longitude DOUBLE COMMENT 'Longitude da localização.',
+  elevation DOUBLE COMMENT 'Elevação em metros acima do nível do mar.',
+  timezone STRING COMMENT 'Fuso horário da localização.',
+  population BIGINT COMMENT 'População da localidade.',
+  admin1 STRING COMMENT 'Nome da divisão administrativa nível 1 (estado).',
+  admin1_id BIGINT COMMENT 'ID da divisão administrativa nível 1.',
+  admin2 STRING COMMENT 'Nome da divisão administrativa nível 2 (município).',
+  admin2_id BIGINT COMMENT 'ID da divisão administrativa nível 2.',
+  country STRING COMMENT 'Nome do país.',
+  country_code STRING COMMENT 'Código ISO do país (BR).',
+  country_id BIGINT COMMENT 'ID do país.',
+  feature_code STRING COMMENT 'Código da feature geográfica (ex: PPLA para capital de estado).'
+)
+COMMENT 'Tabela padronizada de dados de geocoding para localidades brasileiras, com informações administrativas e populacionais.'
+TBLPROPERTIES(
+  delta.autoOptimize.optimizeWrite = true,
+  delta.autoOptimize.autoCompact = true,
+  pipeline.autoOptimize.managed = true,
+  delta.enableRowTracking = true,
+  quality = 'silver'
+)
+CLUSTER BY AUTO
+AS
+SELECT
+  CAST(id AS BIGINT) AS id,
+  trim(capital_consulta) AS capital,
+  upper(trim(uf_consulta)) AS uf,
+  trim(name) AS name,
+  CAST(latitude AS DOUBLE) AS latitude,
+  CAST(longitude AS DOUBLE) AS longitude,
+  CAST(elevation AS DOUBLE) AS elevation,
+  trim(timezone) AS timezone,
+  CAST(population AS BIGINT) AS population,
+  trim(admin1) AS admin1,
+  CAST(admin1_id AS BIGINT) AS admin1_id,
+  trim(admin2) AS admin2,
+  CAST(admin2_id AS BIGINT) AS admin2_id,
+  trim(country) AS country,
+  upper(trim(country_code)) AS country_code,
+  CAST(country_id AS BIGINT) AS country_id,
+  trim(feature_code) AS feature_code
+FROM ${source_catalog}.${source_schema}.raw_geocoding_localidades;

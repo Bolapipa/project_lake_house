@@ -20,7 +20,7 @@ SELECT
   CAST(id AS BIGINT) AS id_regiao,
   trim(nome) AS nome_regiao,
   trim(sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_regioes;
+FROM bronze_dev.ds_ibge.raw_regioes;
 
 -- COMMAND ----------
 
@@ -51,7 +51,7 @@ SELECT
   CAST(regiao['id'] AS BIGINT) AS id_regiao,
   trim(regiao['nome']) AS nome_regiao,
   trim(regiao['sigla']) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_ufs;
+FROM bronze_dev.ds_ibge.raw_ufs;
 
 -- COMMAND ----------
 
@@ -80,7 +80,7 @@ SELECT
   CAST(from_json(UF, 'id BIGINT').id AS BIGINT) AS id_estado,
   trim(from_json(UF, 'nome STRING').nome) AS nome_estado,
   trim(from_json(UF, 'sigla STRING').sigla) AS sigla_estado
-FROM ${source_catalog}.${source_schema}.raw_mesorregioes;
+FROM bronze_dev.ds_ibge.raw_mesorregioes;
 
 -- COMMAND ----------
 
@@ -113,7 +113,7 @@ SELECT
   CAST(from_json(mesorregiao, 'UF STRUCT<id:BIGINT>').UF.id AS BIGINT) AS id_estado,
   trim(from_json(mesorregiao, 'UF STRUCT<nome:STRING>').UF.nome) AS nome_estado,
   trim(from_json(mesorregiao, 'UF STRUCT<sigla:STRING>').UF.sigla) AS sigla_estado
-FROM ${source_catalog}.${source_schema}.raw_microrregioes;
+FROM bronze_dev.ds_ibge.raw_microrregioes;
 
 -- COMMAND ----------
 
@@ -142,7 +142,7 @@ SELECT
   CAST(from_json(UF, 'id BIGINT').id AS BIGINT) AS id_estado,
   trim(from_json(UF, 'nome STRING').nome) AS nome_estado,
   trim(from_json(UF, 'sigla STRING').sigla) AS sigla_estado
-FROM ${source_catalog}.${source_schema}.raw_regioes_intermediarias;
+FROM bronze_dev.ds_ibge.raw_regioes_intermediarias;
 
 -- COMMAND ----------
 
@@ -175,7 +175,7 @@ SELECT
   CAST(from_json(regiao_intermediaria, 'UF STRUCT<id:BIGINT>').UF.id AS BIGINT) AS id_estado,
   trim(from_json(regiao_intermediaria, 'UF STRUCT<nome:STRING>').UF.nome) AS nome_estado,
   trim(from_json(regiao_intermediaria, 'UF STRUCT<sigla:STRING>').UF.sigla) AS sigla_estado
-FROM ${source_catalog}.${source_schema}.raw_regioes_imediatas;
+FROM bronze_dev.ds_ibge.raw_regioes_imediatas;
 
 -- COMMAND ----------
 
@@ -226,7 +226,7 @@ SELECT
   CAST(from_json(microrregiao, 'mesorregiao STRUCT<UF:STRUCT<regiao:STRUCT<id:BIGINT>>>').mesorregiao.UF.regiao.id AS BIGINT) AS id_regiao,
   trim(from_json(microrregiao, 'mesorregiao STRUCT<UF:STRUCT<regiao:STRUCT<nome:STRING>>>').mesorregiao.UF.regiao.nome) AS nome_regiao,
   trim(from_json(microrregiao, 'mesorregiao STRUCT<UF:STRUCT<regiao:STRUCT<sigla:STRING>>>').mesorregiao.UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_municipios;
+FROM bronze_dev.ds_ibge.raw_municipios;
 
 -- COMMAND ----------
 
@@ -281,7 +281,7 @@ SELECT
   CAST(from_json(municipio, 'microrregiao STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<id:BIGINT>>>>').microrregiao.mesorregiao.UF.regiao.id AS BIGINT) AS id_regiao,
   trim(from_json(municipio, 'microrregiao STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<nome:STRING>>>>').microrregiao.mesorregiao.UF.regiao.nome) AS nome_regiao,
   trim(from_json(municipio, 'microrregiao STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<sigla:STRING>>>>').microrregiao.mesorregiao.UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_distritos;
+FROM bronze_dev.ds_ibge.raw_distritos;
 
 -- COMMAND ----------
 
@@ -340,7 +340,7 @@ SELECT
   CAST(from_json(distrito, 'municipio STRUCT<microrregiao:STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<id:BIGINT>>>>>').municipio.microrregiao.mesorregiao.UF.regiao.id AS BIGINT) AS id_regiao,
   trim(from_json(distrito, 'municipio STRUCT<microrregiao:STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<nome:STRING>>>>>').municipio.microrregiao.mesorregiao.UF.regiao.nome) AS nome_regiao,
   trim(from_json(distrito, 'municipio STRUCT<microrregiao:STRUCT<mesorregiao:STRUCT<UF:STRUCT<regiao:STRUCT<sigla:STRING>>>>>').municipio.microrregiao.mesorregiao.UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_subdistritos;
+FROM bronze_dev.ds_ibge.raw_subdistritos;
 
 -- COMMAND ----------
 
@@ -375,7 +375,7 @@ SELECT
   CAST(from_json(UF, 'regiao STRUCT<id:BIGINT>').regiao.id AS BIGINT) AS id_regiao,
   trim(from_json(UF, 'regiao STRUCT<nome:STRING>').regiao.nome) AS nome_regiao,
   trim(from_json(UF, 'regiao STRUCT<sigla:STRING>').regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_regioes_metropolitanas;
+FROM bronze_dev.ds_ibge.raw_regioes_metropolitanas;
 
 -- COMMAND ----------
 
@@ -410,7 +410,7 @@ SELECT
   CAST(from_json(municipios, 'ARRAY<STRUCT<UF:STRUCT<regiao:STRUCT<id:BIGINT>>>>')[0].UF.regiao.id AS BIGINT) AS id_regiao,
   trim(from_json(municipios, 'ARRAY<STRUCT<UF:STRUCT<regiao:STRUCT<nome:STRING>>>>')[0].UF.regiao.nome) AS nome_regiao,
   trim(from_json(municipios, 'ARRAY<STRUCT<UF:STRUCT<regiao:STRUCT<sigla:STRING>>>>')[0].UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_aglomeracoes_urbanas;
+FROM bronze_dev.ds_ibge.raw_aglomeracoes_urbanas;
 
 -- COMMAND ----------
 
@@ -433,7 +433,7 @@ AS
 SELECT
   id AS id_ride,
   trim(nome) AS nome_ride
-FROM ${source_catalog}.${source_schema}.raw_regioes_integradas_desenvolvimento;
+FROM bronze_dev.ds_ibge.raw_regioes_integradas_desenvolvimento;
 
 -- COMMAND ----------
 
@@ -470,7 +470,7 @@ SELECT
   CAST(municipio_exploded.UF.regiao.id AS BIGINT) AS id_regiao,
   trim(municipio_exploded.UF.regiao.nome) AS nome_regiao,
   trim(municipio_exploded.UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_regioes_integradas_desenvolvimento
+FROM bronze_dev.ds_ibge.raw_regioes_integradas_desenvolvimento
 LATERAL VIEW explode(from_json(municipios, 'ARRAY<STRUCT<id:BIGINT,nome:STRING,UF:STRUCT<id:BIGINT,nome:STRING,sigla:STRING,regiao:STRUCT<id:BIGINT,nome:STRING,sigla:STRING>>>>')) AS municipio_exploded;
 
 -- COMMAND ----------
@@ -496,7 +496,7 @@ SELECT
   CAST(id AS BIGINT) AS id_regiao_metropolitana,
   CAST(municipio_exploded.id AS BIGINT) AS id_municipio,
   trim(municipio_exploded.nome) AS nome_municipio
-FROM ${source_catalog}.${source_schema}.raw_regioes_metropolitanas
+FROM bronze_dev.ds_ibge.raw_regioes_metropolitanas
 LATERAL VIEW explode(from_json(municipios, 'ARRAY<STRUCT<id:BIGINT,nome:STRING>>')) AS municipio_exploded;
 
 -- COMMAND ----------
@@ -534,5 +534,5 @@ SELECT
   CAST(municipio_exploded.UF.regiao.id AS BIGINT) AS id_regiao,
   trim(municipio_exploded.UF.regiao.nome) AS nome_regiao,
   trim(municipio_exploded.UF.regiao.sigla) AS sigla_regiao
-FROM ${source_catalog}.${source_schema}.raw_aglomeracoes_urbanas
+FROM bronze_dev.ds_ibge.raw_aglomeracoes_urbanas
 LATERAL VIEW explode(from_json(municipios, 'ARRAY<STRUCT<id:BIGINT,nome:STRING,UF:STRUCT<id:BIGINT,nome:STRING,sigla:STRING,regiao:STRUCT<id:BIGINT,nome:STRING,sigla:STRING>>>>')) AS municipio_exploded;

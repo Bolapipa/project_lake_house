@@ -26,6 +26,10 @@ variables:
     description: "Job schedule status"
     default: PAUSED
 
+  pipeline_development:
+    description: "Pipeline development mode flag"
+    default: true
+
 targets:
   dev:
     mode: development
@@ -39,6 +43,7 @@ targets:
       schema: ds_open_meteo
       silver_catalog: silver_dev
       pause_status: PAUSED
+      pipeline_development: true
 
   prod:
     mode: production
@@ -51,6 +56,7 @@ targets:
       schema: ds_open_meteo
       silver_catalog: silver_prod
       pause_status: PAUSED
+      pipeline_development: false
 
     permissions:
       - user_name: delacortearthur@gmail.com

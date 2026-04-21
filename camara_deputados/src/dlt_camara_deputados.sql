@@ -15,6 +15,7 @@
 
 -- COMMAND ----------
 
+-- DBTITLE 1,tb_deputados
 CREATE OR REFRESH STREAMING LIVE TABLE tb_deputados
 COMMENT "Tabela silver de deputados - dados limpos e padronizados"
 AS
@@ -29,7 +30,7 @@ SELECT
   url_foto,
   LOWER(TRIM(email)) as email,
   current_timestamp() as data_processamento
-FROM STREAM(bronze_dev.ds_camara_deputados.raw_deputados)
+FROM STREAM(${source_catalog}.${source_schema}.raw_deputados)
 WHERE id IS NOT NULL
   AND nome IS NOT NULL
 
@@ -40,6 +41,7 @@ WHERE id IS NOT NULL
 
 -- COMMAND ----------
 
+-- DBTITLE 1,tb_partidos
 CREATE OR REFRESH STREAMING LIVE TABLE tb_partidos
 COMMENT "Tabela silver de partidos políticos - dimensão"
 AS
@@ -50,7 +52,7 @@ SELECT
   uri,
   status,
   current_timestamp() as data_processamento
-FROM STREAM(bronze_dev.ds_camara_deputados.raw_partidos)
+FROM STREAM(${source_catalog}.${source_schema}.raw_partidos)
 WHERE id IS NOT NULL
   AND sigla IS NOT NULL
 
@@ -61,6 +63,7 @@ WHERE id IS NOT NULL
 
 -- COMMAND ----------
 
+-- DBTITLE 1,tb_despesas
 CREATE OR REFRESH STREAMING LIVE TABLE tb_despesas
 COMMENT "Tabela silver de despesas dos deputados (cota parlamentar)"
 AS
@@ -84,7 +87,7 @@ SELECT
   cod_lote,
   parcela,
   current_timestamp() as data_processamento
-FROM STREAM(bronze_dev.ds_camara_deputados.raw_despesas)
+FROM STREAM(${source_catalog}.${source_schema}.raw_despesas)
 WHERE id_deputado IS NOT NULL
   AND ano IS NOT NULL
   AND mes IS NOT NULL
@@ -97,6 +100,7 @@ WHERE id_deputado IS NOT NULL
 
 -- COMMAND ----------
 
+-- DBTITLE 1,tb_votacoes
 CREATE OR REFRESH STREAMING LIVE TABLE tb_votacoes
 COMMENT "Tabela silver de votações do plenário e comissões"
 AS
@@ -115,6 +119,6 @@ SELECT
   CAST(aprovacao AS INT) as aprovacao,
   TRIM(objeto_votacao) as objeto_votacao,
   current_timestamp() as data_processamento
-FROM STREAM(bronze_dev.ds_camara_deputados.raw_votacoes)
+FROM STREAM(${source_catalog}.${source_schema}.raw_votacoes)
 WHERE id IS NOT NULL
   AND data IS NOT NULL
