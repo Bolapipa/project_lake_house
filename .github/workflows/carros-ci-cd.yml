@@ -27,7 +27,6 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      DATABRICKS_BUNDLE_TF_DOWNLOAD_SIGNATURE_VERIFICATION: "false" # corrigido
 
     defaults:
       run:
@@ -43,10 +42,13 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.297.2 # corrigido
+        uses: databricks/setup-cli@v0.278.0
+
+      - name: Instalar uv
+        run: python -m pip install uv
 
       - name: Validar autenticação Databricks
-        run: databricks current-user me # corrigido
+        run: databricks current-user me
 
       - name: Validar bundle carros DEV
         if: github.ref == 'refs/heads/dev'
@@ -65,7 +67,6 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      DATABRICKS_BUNDLE_TF_DOWNLOAD_SIGNATURE_VERIFICATION: "false" # corrigido
 
     defaults:
       run:
@@ -81,10 +82,10 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.297.2 # corrigido
+        uses: databricks/setup-cli@v0.278.0
 
-      - name: Validar autenticação Databricks
-        run: databricks current-user me # corrigido
+      - name: Instalar uv
+        run: python -m pip install uv
 
       - name: Deploy bundle carros em DEV
         run: databricks bundle deploy -t dev --auto-approve
@@ -98,7 +99,6 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      DATABRICKS_BUNDLE_TF_DOWNLOAD_SIGNATURE_VERIFICATION: "false" # corrigido
 
     defaults:
       run:
@@ -114,10 +114,10 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.297.2 # corrigido
+        uses: databricks/setup-cli@v0.278.0
 
-      - name: Validar autenticação Databricks
-        run: databricks current-user me # corrigido
+      - name: Instalar uv
+        run: python -m pip install uv
 
       - name: Deploy bundle carros em PROD
         run: databricks bundle deploy -t prod --auto-approve
