@@ -200,13 +200,14 @@ if all_rows:
         "objeto_votacao"
     ]
 
-    # Schema fixo com todas as colunas como string
+    # Schema fixo com todas as colunas como string (padrão Bronze)
     schema_string = StructType([
         StructField(coluna, StringType(), True)
         for coluna in colunas
     ])
 
     # Transforma todos os valores em string para a camada Bronze
+    # Mantém None como None (não converte para string vazia)
     registros = []
     for row in all_rows:
         registro = tuple(
@@ -228,8 +229,11 @@ if all_rows:
     print("\nPreview das votações coletadas:")
     display(df_votacoes)
 
-    # Salvar na tabela Bronze
-    df_votacoes.write.mode("append").saveAsTable(tabela_destino)
+    # Salvar na tabela Bronze com overwriteSchema para garantir compatibilidade
+    df_votacoes.write \
+        .mode("append") \
+        .option("overwriteSchema", "true") \
+        .saveAsTable(tabela_destino)
 
     # Atualizar tabela de controle com a data/hora mais recente
     votacoes_ordenadas = sorted(all_rows, key=lambda x: x[2] if x[2] else "", reverse=True)
