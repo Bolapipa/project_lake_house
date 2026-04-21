@@ -42,7 +42,12 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
+
+      - name: Validar autenticação Databricks # corrigido
+        run: databricks current-user me # corrigido
 
       - name: Validar bundle em dev
         if: github.ref == 'refs/heads/dev'
@@ -76,12 +81,14 @@ jobs:
           python-version: "3.11"
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Deploy em dev
         if: github.ref == 'refs/heads/dev'
-        run: databricks bundle deploy -t dev
+        run: databricks bundle deploy -t dev --auto-approve # corrigido
 
       - name: Deploy em prod
         if: github.ref == 'refs/heads/prod'
-        run: databricks bundle deploy -t prod
+        run: databricks bundle deploy -t prod --auto-approve # corrigido

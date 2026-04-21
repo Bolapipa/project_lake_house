@@ -41,14 +41,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.5.7"
-          terraform_wrapper: false
-
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv
@@ -87,14 +83,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.5.7"
-          terraform_wrapper: false
-
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv
@@ -125,14 +117,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.5.7"
-          terraform_wrapper: false
-
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@v0.278.0
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv
