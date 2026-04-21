@@ -3,7 +3,6 @@ resources:
     carros_pipeline:
       name: 'Carros ETL Pipeline'
       catalog: ${var.silver_catalog}
-      target: ${var.schema}
       schema: ${var.schema}
       
       libraries:

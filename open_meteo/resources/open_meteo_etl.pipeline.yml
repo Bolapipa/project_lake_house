@@ -3,7 +3,6 @@ resources:
     open_meteo_pipeline:
       name: 'Open Meteo ETL Pipeline'
       catalog: ${var.silver_catalog}
-      target: ${var.schema}
       schema: ${var.schema}
       
       libraries:

@@ -3,7 +3,6 @@ resources:
     camara_deputados_pipeline:
       name: 'Camara Deputados ETL Pipeline'
       catalog: ${var.silver_catalog}
-      target: ${var.schema}
       schema: ${var.schema}
       
       libraries:
