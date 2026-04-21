@@ -1,19 +1,24 @@
-# The main pipeline for pokemon
 resources:
   pipelines:
     pokemon_pipeline:
-      name: pokemon_etl
-      catalog: silver_${var.environment}
-      schema: ds_pokemon
-
-      tags:
-        environment: ${var.environment}
-
-      serverless: true
-
+      name: 'Pokemon ETL Pipeline'
+      catalog: ${var.silver_catalog}
+      target: ${var.schema}
+      
       libraries:
         - notebook:
             path: ../src/dlt_pokemon.sql
-
+      
       configuration:
-        bundle.sourcePath: ${workspace.file_path}/src
+        source_catalog: ${var.catalog}
+        source_schema: ${var.schema}
+      
+      serverless: true
+      continuous: false
+      development: ${var.pipeline_development}
+      photon: true
+      channel: current
+      
+      permissions:
+        - level: CAN_VIEW
+          group_name: 'users'

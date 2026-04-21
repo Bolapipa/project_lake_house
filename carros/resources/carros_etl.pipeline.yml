@@ -1,41 +1,24 @@
-# Pipeline para camada Silver (Bronze -> Silver)
 resources:
   pipelines:
-    carros_pipeline_silver:
-      name: carros_etl_silver_${bundle.target}
-      catalog: silver_${var.environment}
-      schema: ds_carros
-
-      tags:
-        environment: ${var.environment}
-        layer: silver
-
-      serverless: true
-
+    carros_pipeline:
+      name: 'Carros ETL Pipeline'
+      catalog: ${var.silver_catalog}
+      target: ${var.schema}
+      
       libraries:
         - notebook:
             path: ../src/dlt_carros.sql
-
+      
       configuration:
-        bundle.sourcePath: ${workspace.file_path}/src
-
-    # Pipeline para camada Gold (Silver -> Gold)
-    carros_pipeline_gold:
-      name: carros_etl_gold_${bundle.target}
-      catalog: gold_${var.environment}
-      schema: dm_carros
-
-      tags:
-        environment: ${var.environment}
-        layer: gold
-
+        source_catalog: ${var.catalog}
+        source_schema: ${var.schema}
+      
       serverless: true
-
-      libraries:
-        - notebook:
-            path: ../src/dlt_carros_gold.sql
-
-      configuration:
-        bundle.sourcePath: ${workspace.file_path}/src
-        # Passa o catálogo silver para as queries poderem referenciar
-        silver_catalog: silver_${var.environment}
+      continuous: false
+      development: ${var.pipeline_development}
+      photon: true
+      channel: current
+      
+      permissions:
+        - level: CAN_VIEW
+          group_name: 'users'
