@@ -16,7 +16,7 @@
 -- COMMAND ----------
 
 -- DBTITLE 1,tb_deputados
-CREATE OR REFRESH STREAMING LIVE TABLE tb_deputados
+CREATE OR REFRESH STREAMING LIVE TABLE cleaned_deputados
 COMMENT "Tabela silver de deputados - dados limpos e padronizados"
 AS
 SELECT
@@ -42,7 +42,7 @@ WHERE id IS NOT NULL
 -- COMMAND ----------
 
 -- DBTITLE 1,tb_partidos
-CREATE OR REFRESH STREAMING LIVE TABLE tb_partidos
+CREATE OR REFRESH STREAMING LIVE TABLE cleaned_partidos
 COMMENT "Tabela silver de partidos políticos - dimensão"
 AS
 SELECT
@@ -64,7 +64,7 @@ WHERE id IS NOT NULL
 -- COMMAND ----------
 
 -- DBTITLE 1,tb_despesas
-CREATE OR REFRESH STREAMING LIVE TABLE tb_despesas
+CREATE OR REFRESH STREAMING LIVE TABLE cleaned_despesas
 COMMENT "Tabela silver de despesas dos deputados (cota parlamentar)"
 AS
 SELECT
@@ -101,7 +101,7 @@ WHERE id_deputado IS NOT NULL
 -- COMMAND ----------
 
 -- DBTITLE 1,tb_votacoes
-CREATE OR REFRESH STREAMING LIVE TABLE tb_votacoes
+CREATE OR REFRESH STREAMING LIVE TABLE cleaned_votacoes
 COMMENT "Tabela silver de votações do plenário e comissões"
 AS
 SELECT
