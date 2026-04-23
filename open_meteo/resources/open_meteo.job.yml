@@ -77,9 +77,10 @@ resources:
         - task_key: refresh_pipeline
           depends_on:
             - task_key: ingest_tabela_auxiliar_localidades
+            - task_key: ingest_geocoding_localidades
             - task_key: ingest_daily_forecast
             - task_key: ingest_historical_weather
             - task_key: ingest_air_quality
           pipeline_task:
-            pipeline_id: ${resources.pipelines.open_meteo_etl.id}
+            pipeline_id: ${resources.pipelines.open_meteo_pipeline.id}
           max_retries: 1
