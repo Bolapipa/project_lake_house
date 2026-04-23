@@ -21,11 +21,65 @@ resources:
           - delacortearthur@gmail.com
 
       tasks:
-        - task_key: notebook_task
+        - task_key: ingest_tabela_auxiliar_localidades
+          notebook_task:
+            notebook_path: ../src/ingest_tabela_auxiliar_localidades.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_geocoding_localidades
+          depends_on:
+            - task_key: ingest_tabela_auxiliar_localidades
+          notebook_task:
+            notebook_path: ../src/ingest_geocoding_localidades.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_daily_forecast
+          depends_on:
+            - task_key: ingest_tabela_auxiliar_localidades
           notebook_task:
             notebook_path: ../src/ingest_daily_forecast.py
             base_parameters:
               environment: "{{job.parameters.environment}}"
               catalog: "{{job.parameters.catalog}}"
               schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_historical_weather
+          depends_on:
+            - task_key: ingest_tabela_auxiliar_localidades
+          notebook_task:
+            notebook_path: ../src/ingest_historical_weather.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: ingest_air_quality
+          depends_on:
+            - task_key: ingest_tabela_auxiliar_localidades
+          notebook_task:
+            notebook_path: ../src/ingest_air_quality.py
+            base_parameters:
+              environment: "{{job.parameters.environment}}"
+              catalog: "{{job.parameters.catalog}}"
+              schema: "{{job.parameters.schema}}"
+          max_retries: 1
+
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: ingest_tabela_auxiliar_localidades
+            - task_key: ingest_daily_forecast
+            - task_key: ingest_historical_weather
+            - task_key: ingest_air_quality
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.open_meteo_etl.id}
           max_retries: 1
