@@ -48,7 +48,9 @@ jobs:
           terraform_wrapper: false
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@main
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv
@@ -94,7 +96,9 @@ jobs:
           terraform_wrapper: false
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@main
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv
@@ -132,7 +136,9 @@ jobs:
           terraform_wrapper: false
 
       - name: Instalar Databricks CLI
-        uses: databricks/setup-cli@main
+        uses: databricks/setup-cli@main # corrigido
+        with:
+          version: 0.278.1 # corrigido
 
       - name: Instalar uv
         run: python -m pip install uv

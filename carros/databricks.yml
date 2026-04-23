@@ -1,7 +1,5 @@
-# This is a Databricks asset bundle definition for carros.
 bundle:
   name: carros
-  uuid: decb1c7a-3cc3-4257-aba9-63ed1aa7994f
 
 include:
   - resources/*.yml
@@ -20,9 +18,17 @@ variables:
     description: "Schema de destino"
     default: ds_carros
 
+  silver_catalog:
+    description: "Catalog de destino da silver"
+    default: silver_dev
+
   pause_status:
     description: "Job schedule status"
     default: PAUSED
+
+  pipeline_development:
+    description: "Pipeline development mode flag"
+    default: true
 
 targets:
   dev:
@@ -35,7 +41,9 @@ targets:
       environment: dev
       catalog: bronze_dev
       schema: ds_carros
+      silver_catalog: silver_dev
       pause_status: PAUSED
+      pipeline_development: true
 
   prod:
     mode: production
@@ -46,7 +54,9 @@ targets:
       environment: prod
       catalog: bronze_prod
       schema: ds_carros
-      pause_status: UNPAUSED 
+      silver_catalog: silver_prod
+      pause_status: PAUSED
+      pipeline_development: false
 
     permissions:
       - user_name: delacortearthur@gmail.com

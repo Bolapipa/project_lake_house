@@ -1,4 +1,5 @@
 # Databricks notebook source
+# DBTITLE 1,Descrição da Ingestão
 # MAGIC %md
 # MAGIC # Ingestão de Votações - Câmara dos Deputados
 # MAGIC
@@ -6,19 +7,24 @@
 # MAGIC Esta ingestão captura votações nominais com os votos de cada deputado.
 # MAGIC
 # MAGIC **Fonte**: https://dadosabertos.camara.leg.br/api/v2/votacoes
+# MAGIC
 # MAGIC **Tipo**: Ingestão incremental por data/hora
+# MAGIC
 # MAGIC **Controle**: Baseado na última data/hora de votação processada
+# MAGIC
 # MAGIC **Campos**: id, data, data_hora_registro, sigla_orgao, id_orgao, uri_orgao, uri_evento, proposicao_cod_tipo, proposicao_numero, proposicao_ano, uri_proposicao_votada, aprovacao, objeto_votacao
 
 # COMMAND ----------
 
+# DBTITLE 1,Imports
 import requests
-import json
 import time
 from datetime import datetime, timedelta
+from pyspark.sql.types import StructType, StructField, StringType
 
 # COMMAND ----------
 
+# DBTITLE 1,Configuração de Parâmetros
 # Configuração de parâmetros via widgets
 dbutils.widgets.text("catalog", "bronze_dev")
 used_catalog = dbutils.widgets.get("catalog")
@@ -42,6 +48,7 @@ print(f"Tabela destino: {tabela_destino}")
 
 # COMMAND ----------
 
+# DBTITLE 1,Busca Última Data Processada
 # Busca a última data/hora de votação processada
 ctrl_data = spark.sql(
     f"SELECT raw_votacoes FROM {tabela_controle} WHERE id = 1"
@@ -66,6 +73,7 @@ print(f"Período de busca: {data_inicial} até {data_final}")
 
 # COMMAND ----------
 
+# DBTITLE 1,Ingestão de Votações
 # Ingestão de votações da API com paginação automática
 API_URL = "https://dadosabertos.camara.leg.br/api/v2/votacoes"
 all_rows = []
@@ -91,7 +99,7 @@ while pagina <= total_paginas:
             dados_json = response.json()
             dados = dados_json.get("dados", [])
             
-            # Atualizar total de páginas (apenas na primeira iteração)
+            # Atualizar total de páginas apenas na primeira iteração
             if pagina == 1:
                 links = dados_json.get("links", [])
                 for link in links:
@@ -124,16 +132,16 @@ while pagina <= total_paginas:
                     try:
                         partes = proposicao.split()
                         prop_cod_tipo = partes[0] if len(partes) > 0 else None
-                        prop_numero = int(partes[1]) if len(partes) > 1 else 0
-                        prop_ano = int(partes[2].replace("/", "")) if len(partes) > 2 else 0
+                        prop_numero = partes[1] if len(partes) > 1 else None
+                        prop_ano = partes[2].replace("/", "") if len(partes) > 2 else None
                     except:
                         prop_cod_tipo = None
-                        prop_numero = 0
-                        prop_ano = 0
+                        prop_numero = None
+                        prop_ano = None
                 else:
                     prop_cod_tipo = None
-                    prop_numero = 0
-                    prop_ano = 0
+                    prop_numero = None
+                    prop_ano = None
                 
                 # Extrair dados relevantes
                 row = (
@@ -148,14 +156,15 @@ while pagina <= total_paginas:
                     prop_numero,                               # proposicao_numero
                     prop_ano,                                  # proposicao_ano
                     proposicao_uri,                            # uri_proposicao_votada
-                    votacao.get("aprovacao") or 0,             # aprovacao (int: 1=aprovado, 0=rejeitado)
+                    votacao.get("aprovacao"),                  # aprovacao
                     votacao.get("descricao")                   # objeto_votacao
                 )
+
                 all_rows.append(row)
             
             # Próxima página
             pagina += 1
-            time.sleep(0.2)  # Rate limiting
+            time.sleep(0.2)
             
         else:
             print(f"Erro HTTP {response.status_code} na página {pagina}")
@@ -171,60 +180,92 @@ print(f"Total de páginas processadas: {pagina - 1}")
 
 # COMMAND ----------
 
+# DBTITLE 1,Gravação dos Dados
 # Gravação dos dados e atualização do controle
 if all_rows:
-    # Criar DataFrame com schema definido
+    # Nomes das colunas
+    colunas = [
+        "id",
+        "data",
+        "data_hora_registro",
+        "sigla_orgao",
+        "id_orgao",
+        "uri_orgao",
+        "uri_evento",
+        "proposicao_cod_tipo",
+        "proposicao_numero",
+        "proposicao_ano",
+        "uri_proposicao_votada",
+        "aprovacao",
+        "objeto_votacao"
+    ]
+
+    # Schema fixo com todas as colunas como string (padrão Bronze)
+    schema_string = StructType([
+        StructField(coluna, StringType(), True)
+        for coluna in colunas
+    ])
+
+    # Transforma todos os valores em string para a camada Bronze
+    # Mantém None como None (não converte para string vazia)
+    registros = []
+    for row in all_rows:
+        registro = tuple(
+            None if valor is None else str(valor)
+            for valor in row
+        )
+        registros.append(registro)
+
+    # Cria DataFrame com schema 100% string
     df_votacoes = spark.createDataFrame(
-        all_rows,
-        [
-            "id",
-            "data",
-            "data_hora_registro",
-            "sigla_orgao",
-            "id_orgao",
-            "uri_orgao",
-            "uri_evento",
-            "proposicao_cod_tipo",
-            "proposicao_numero",
-            "proposicao_ano",
-            "uri_proposicao_votada",
-            "aprovacao",
-            "objeto_votacao"
-        ]
+        registros,
+        schema=schema_string
     )
-    
+
+    # Mantém a ordem original das colunas
+    df_votacoes = df_votacoes.select(*colunas)
+
     # Exibir preview dos dados
     print("\nPreview das votações coletadas:")
     display(df_votacoes)
+
+    # Verificar se a tabela existe
+    tabela_existe = spark.catalog.tableExists(tabela_destino)
     
-    # Salvar na tabela Bronze
-    df_votacoes.write.mode("append").option("mergeSchema", "true").saveAsTable(tabela_destino)
-    
+    if not tabela_existe:
+        # Primeira execução: cria tabela com schema STRING fixo
+        print(f"Criando tabela {tabela_destino} com schema STRING...")
+        df_votacoes.write.mode("overwrite").saveAsTable(tabela_destino)
+        print("Tabela criada com sucesso!")
+    else:
+        # Execuções seguintes: apenas append (sem modificar schema)
+        print(f"Inserindo dados na tabela existente {tabela_destino}...")
+        df_votacoes.write.mode("append").saveAsTable(tabela_destino)
+
     # Atualizar tabela de controle com a data/hora mais recente
-    # Buscar a última data/hora das votações coletadas
     votacoes_ordenadas = sorted(all_rows, key=lambda x: x[2] if x[2] else "", reverse=True)
+
     if votacoes_ordenadas and votacoes_ordenadas[0][2]:
         nova_data_hora = votacoes_ordenadas[0][2]
-        # Converter de ISO para formato padrão
         nova_data_hora = nova_data_hora.replace("T", " ")[:19]
     else:
         nova_data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     spark.sql(f"""
         UPDATE {tabela_controle}
         SET raw_votacoes = '{nova_data_hora}'
         WHERE id = 1
     """)
-    
+
     print(f"\nDados gravados com sucesso!")
-    print(f"Ultima data/hora atualizada: {nova_data_hora}")
+    print(f"Última data/hora atualizada: {nova_data_hora}")
     print(f"Total de votações inseridas: {len(all_rows)}")
-    
+
     # Estatísticas
     print("\nEstatísticas:")
-    print(f"Votações aprovadas: {sum(1 for r in all_rows if r[11] == 1)}")
-    print(f"Votações rejeitadas: {sum(1 for r in all_rows if r[11] == 0)}")
+    print(f"Votações aprovadas: {sum(1 for r in all_rows if str(r[11]) == '1')}")
+    print(f"Votações rejeitadas: {sum(1 for r in all_rows if str(r[11]) == '0')}")
     df_votacoes.groupBy("sigla_orgao").count().orderBy("count", ascending=False).show(10)
-    
+
 else:
     print("Nenhuma votação nova para inserir.")

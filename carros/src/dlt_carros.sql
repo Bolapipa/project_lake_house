@@ -1,5 +1,5 @@
 -- Databricks notebook source
--- DBTITLE 1,Bronze para Silver: marcas e modelos
+-- DBTITLE 1,cleaned_marcas
 CREATE OR REFRESH MATERIALIZED VIEW cleaned_marcas
 (
   id_marca STRING COMMENT 'Identificador único da marca de veículo.',
@@ -18,11 +18,11 @@ AS
 SELECT
   CAST(id_marca AS STRING) AS id_marca,
   trim(nome_marca) AS nome_marca
-FROM bronze_dev.ds_carros.raw_marcas;
+FROM ${source_catalog}.${source_schema}.raw_marcas;
 
 -- COMMAND ----------
 
--- DBTITLE 1,Bronze para Silver: modelos
+-- DBTITLE 1,cleaned_modelos
 CREATE OR REFRESH MATERIALIZED VIEW cleaned_modelos
 (
   id_marca STRING COMMENT 'Identificador único da marca relacionada ao modelo.',
@@ -45,11 +45,11 @@ SELECT
   trim(nome_marca) AS nome_marca,
   CAST(id_modelo AS STRING) AS id_modelo,
   trim(nome_modelo) AS nome_modelo
-FROM bronze_dev.ds_carros.raw_modelos;
+FROM ${source_catalog}.${source_schema}.raw_modelos;
 
 -- COMMAND ----------
 
--- DBTITLE 1,Bronze para Silver: anos de veículos
+-- DBTITLE 1,cleaned_anos
 CREATE OR REFRESH MATERIALIZED VIEW cleaned_anos
 (
   id_marca STRING COMMENT 'Identificador único da marca de veículo.',
@@ -76,11 +76,11 @@ SELECT
   trim(nome_modelo) AS nome_modelo,
   CAST(split(trim(nome_ano), ' ')[0] AS INT) AS ano_carro,
   trim(substring(trim(nome_ano), length(split(trim(nome_ano), ' ')[0]) + 2)) AS combustivel
-FROM bronze_dev.ds_carros.raw_anos;
+FROM ${source_catalog}.${source_schema}.raw_anos;
 
 -- COMMAND ----------
 
--- DBTITLE 1,Bronze para Silver: referencias
+-- DBTITLE 1,cleaned_referencias
 CREATE OR REFRESH MATERIALIZED VIEW cleaned_referencias
 (
   id_referencia STRING COMMENT 'Identificador incremental da referência FIPE.',
@@ -148,11 +148,11 @@ SELECT
   -- ano agora vem da posição correta
   CAST(split(mes_referencia, '/')[1] AS INT) AS ano_referencia
 
-FROM bronze_dev.ds_carros.raw_referencias;
+FROM ${source_catalog}.${source_schema}.raw_referencias;
 
 -- COMMAND ----------
 
--- DBTITLE 1,etl fipe
+-- DBTITLE 1,cleaned_fipe
 CREATE OR REPLACE MATERIALIZED VIEW cleaned_fipe
 (
   id_referencia STRING COMMENT 'Identificador da referência FIPE utilizada na consulta.',
@@ -187,4 +187,4 @@ SELECT
   TRY_CAST(ano_modelo AS INT) AS ano_modelo,
   combustivel,
   codigo_fipe
-FROM bronze_dev.ds_carros.raw_fipe;
+FROM ${source_catalog}.${source_schema}.raw_fipe;

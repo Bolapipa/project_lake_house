@@ -1,2 +1,24 @@
-# Pipeline da camada silver sera adicionado depois.
-# Neste momento, o bundle contempla apenas o job da bronze.
+resources:
+  pipelines:
+    open_meteo_pipeline:
+      name: 'Open Meteo ETL Pipeline'
+      catalog: ${var.silver_catalog}
+      schema: ${var.schema}
+      
+      libraries:
+        - notebook:
+            path: ../src/dlt_open_meteo.sql
+      
+      configuration:
+        source_catalog: ${var.catalog}
+        source_schema: ${var.schema}
+      
+      serverless: true
+      continuous: false
+      development: ${var.pipeline_development}
+      photon: true
+      channel: current
+      
+      permissions:
+        - level: CAN_VIEW
+          group_name: 'users'
