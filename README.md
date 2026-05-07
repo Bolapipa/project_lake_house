@@ -32,6 +32,68 @@ Tudo foi construído pensando em ser legível, escalável e fácil de entender, 
 
 ---
 
+## Galeria Visual Geral (Airflow + GitHub + Databricks)
+
+Esta secao centraliza os principais registros visuais do projeto para facilitar leitura tecnica e apresentacao (ex.: portfolio e LinkedIn).
+
+### 1) Repositorio no GitHub
+
+![GitHub Repository](open_meteo/docs/images/linkedin/github_repo.png)
+
+**O que mostra:** estrutura geral do repositorio, branch ativa e ultimo commit relevante.
+
+### 2) Pull Request tecnico consolidando ajustes
+
+![GitHub Pull Request](open_meteo/docs/images/linkedin/github_pr_33.png)
+
+**O que mostra:** PR com descricao tecnica das mudancas de orquestracao e documentacao.
+
+### 3) Pipeline de CI/CD no GitHub Actions
+
+![GitHub Actions](open_meteo/docs/images/linkedin/github_actions_open_meteo.png)
+
+**O que mostra:** historico de execucoes do workflow `open_meteo-ci-cd.yml`.
+
+### 4) Airflow - Visao geral da plataforma
+
+![Airflow Home](open_meteo/docs/images/linkedin/airflow_home.png)
+
+**O que mostra:** saude dos componentes, status de dags e historico de execucoes.
+
+### 5) Airflow - DAG de producao (overview)
+
+![Airflow DAG Overview](open_meteo/docs/images/linkedin/airflow_dag_prod.png)
+
+**O que mostra:** DAG `open_meteo_databricks_prod` ativa e monitorada.
+
+### 6) Airflow - Historico de runs da DAG de producao
+
+![Airflow DAG Runs](open_meteo/docs/images/linkedin/airflow_dag_runs_prod.png)
+
+**O que mostra:** execucoes recentes com rastreabilidade de sucesso.
+
+### 7) Databricks - Jobs + Arquitetura (snapshot visual)
+
+![Databricks Snapshot Visual](open_meteo/docs/images/linkedin/databricks_visual_report.png)
+
+**O que mostra:** consolidado visual com dados reais de jobs, pipelines, taxa de sucesso e fluxo de arquitetura.
+
+### Mapa rapido por dominio
+
+- `carros`: ingestao de dados da Tabela FIPE.
+- `pokemon`: ingestao e modelagem de dados da PokeAPI.
+- `ibge`: ingestao de divisao territorial oficial do Brasil.
+- `open_meteo`: ingestao meteorologica, DLT e orquestracao externa via Airflow.
+- `camara_deputados`: ingestao de dados politicos (deputados, partidos, despesas, votacoes).
+
+### Onde aprofundar cada parte
+
+- Visao detalhada do Open Meteo: `open_meteo/README.md`
+- Stack de orquestracao Airflow: `open_meteo/airflow/README.md`
+- Material visual Databricks: `open_meteo/docs/databricks_visual.md`
+- Roteiro pronto para post: `open_meteo/docs/linkedin_post.md`
+
+---
 ## Arquitetura Medalhão
 
 O projeto segue a **Arquitetura Medalhão**, que organiza os dados em três camadas progressivas de refinamento:
@@ -1406,5 +1468,5 @@ Este projeto foi desenvolvido como material de estudo e demonstração prática 
 
 ---
 
-**Última Atualização**: 25 de Abril de 2026  
-**Versão**: 4.0 - Documentação completa incluindo variáveis de ambiente, tokens, autenticação e integração com Apache Airflow
+**Última Atualização**: 07 de Maio de 2026  
+**Versão**: 4.1 - Documentação geral com galeria visual (GitHub, Airflow e Databricks)
