@@ -55,6 +55,13 @@ As imagens abaixo foram capturadas em **07/05/2026** para documentar os pontos m
 
 **O que mostra:** historico de execucoes do workflow `CI/CD open_meteo`, reforcando rastreabilidade e governanca de deploy.
 
+### 7) Databricks - Jobs + Arquitetura (snapshot visual)
+
+![Databricks Snapshot Visual](docs/images/linkedin/databricks_visual_report.png)
+
+**O que mostra:** visao consolidada (com dados reais da API Databricks) de jobs open_meteo, pipelines, historico de runs (PROD/DEV) e arquitetura de orquestracao ponta a ponta.
+Detalhamento complementar: `open_meteo/docs/databricks_visual.md`.
+
 ---
 ## Arquitetura do Projeto
 
@@ -966,4 +973,5 @@ notebook_params={
 **Versão**: 3.0 - Documentação expandida com variáveis, queries e métricas  
 **Mantido por**: delacortearthur@gmail.com  
 **Orquestração**: Apache Airflow (externo)
+
 

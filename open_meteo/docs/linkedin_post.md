@@ -27,13 +27,16 @@ Resultado: uma base mais robusta para evoluir o pipeline e manter confiabilidade
 3. DAG de producao (overview)
 ![Airflow DAG Overview](images/linkedin/airflow_dag_prod.png)
 
-4. Historico de runs da DAG de producao
+4. Databricks - jobs + arquitetura (snapshot visual)
+![Databricks Snapshot Visual](images/linkedin/databricks_visual_report.png)
+
+5. Historico de runs da DAG de producao
 ![Airflow DAG Runs](images/linkedin/airflow_dag_runs_prod.png)
 
-5. PR tecnico com mudancas
+6. PR tecnico com mudancas
 ![GitHub Pull Request](images/linkedin/github_pr_33.png)
 
-6. CI/CD no GitHub Actions
+7. CI/CD no GitHub Actions
 ![GitHub Actions](images/linkedin/github_actions_open_meteo.png)
 
 ## Hashtags sugeridas
