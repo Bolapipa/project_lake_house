@@ -78,6 +78,44 @@ Esta secao centraliza os principais registros visuais do projeto para facilitar 
 
 **O que mostra:** consolidado visual com dados reais de jobs, pipelines, taxa de sucesso e fluxo de arquitetura.
 
+### Capturas Originais do Databricks Workspace
+
+### 8) Workspace - raiz do usuario no Databricks
+
+![Workspace Root](docs/images/project_data_lake/workspace_root.png)
+
+**O que mostra:** estrutura inicial do workspace com o repositorio `project_lake_house` vinculado.
+
+### 9) Workspace - repositorio `project_lake_house`
+
+![Workspace Repo](docs/images/project_data_lake/workspace_repo.png)
+
+**O que mostra:** visao interna do repositorio no Databricks Repos com os dominios de dados.
+
+### 10) Job `carros_dev` - execucoes e tasks
+
+![Job Carros Dev](docs/images/project_data_lake/carros_dev.png)
+
+**O que mostra:** painel de runs, tasks, detalhes do job, parametros e compute serverless.
+
+### 11) Job `pokemon_dev` - execucoes e tasks
+
+![Job Pokemon Dev](docs/images/project_data_lake/pokemon_dev.png)
+
+**O que mostra:** histórico de execucoes do bundle pokemon com detalhamento por task.
+
+### 12) Bundle `carros` dentro do workspace
+
+![Bundle Carros](docs/images/project_data_lake/asset_bundle_carros.png)
+
+**O que mostra:** estrutura de pastas/arquivos do asset bundle `carros` no Databricks.
+
+### 13) Bundle `pokemon` dentro do workspace
+
+![Bundle Pokemon](docs/images/project_data_lake/asset_bundle_pokemon.png)
+
+**O que mostra:** estrutura de pastas/arquivos do asset bundle `pokemon` no Databricks.
+
 ### Mapa rapido por dominio
 
 - `carros`: ingestao de dados da Tabela FIPE.
@@ -1469,4 +1507,4 @@ Este projeto foi desenvolvido como material de estudo e demonstração prática 
 ---
 
 **Última Atualização**: 07 de Maio de 2026  
-**Versão**: 4.1 - Documentação geral com galeria visual (GitHub, Airflow e Databricks)
+**Versão**: 4.2 - Documentação geral com galeria visual completa e capturas originais do Databricks
