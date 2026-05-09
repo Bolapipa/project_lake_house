@@ -1,0 +1,114 @@
+﻿<!doctype html>
+<html lang='pt-BR'>
+<head>
+<meta charset='UTF-8' />
+<title>Open Meteo - Databricks Snapshot</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f3f5f8; color:#0f172a; margin:0; }
+  .wrap { max-width: 1300px; margin: 24px auto; padding: 0 18px 40px; }
+  .hero { background: linear-gradient(135deg,#ff3621,#ff7a21); color:white; border-radius:18px; padding:26px 28px; box-shadow:0 14px 40px rgba(17,24,39,.2); }
+  .hero h1 { margin:0 0 8px; font-size:34px; }
+  .hero p { margin:0; font-size:16px; opacity:.95; }
+  .grid { display:grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-top:16px; }
+  .card { background:white; border-radius:14px; padding:16px; box-shadow:0 6px 18px rgba(15,23,42,.08); }
+  .kpi { font-size:34px; font-weight:700; margin:8px 0 0; }
+  .label { color:#475569; font-size:13px; text-transform:uppercase; letter-spacing:.08em; }
+  h2 { margin:26px 0 12px; font-size:24px; }
+  table { width:100%; border-collapse: collapse; background:white; border-radius:14px; overflow:hidden; box-shadow:0 6px 18px rgba(15,23,42,.08); }
+  th, td { padding:12px 14px; border-bottom:1px solid #e2e8f0; text-align:left; font-size:14px; }
+  th { background:#0f172a; color:#e2e8f0; font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  .ok { color:#15803d; font-weight:700; }
+  .bad { color:#b91c1c; font-weight:700; }
+  .arch { background:white; border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(15,23,42,.08); }
+  .flow { display:grid; grid-template-columns: 1fr 80px 1fr 80px 1fr; align-items:center; gap:8px; margin:10px 0; }
+  .box { background:#f8fafc; border:2px solid #cbd5e1; border-radius:12px; padding:14px; text-align:center; font-weight:600; }
+  .arrow { text-align:center; font-size:28px; color:#334155; }
+  .muted { color:#64748b; font-size:13px; }
+  .two { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+</style>
+</head>
+<body>
+<div class='wrap'>
+  <div class='hero'>
+    <h1>Open Meteo - Snapshot Operacional Databricks</h1>
+    <p>Coleta automatica via API Databricks em 2026-05-07 18:45:28. Fonte: jobs, runs e pipelines reais do workspace.</p>
+  </div>
+
+  <div class='grid'>
+    <div class='card'><div class='label'>Jobs Totais</div><div class='kpi'>10</div></div>
+    <div class='card'><div class='label'>Jobs Open Meteo</div><div class='kpi'>2</div></div>
+    <div class='card'><div class='label'>Runs PROD (sucesso)</div><div class='kpi'>100%</div></div>
+    <div class='card'><div class='label'>Runs DEV (sucesso)</div><div class='kpi'>95.2%</div></div>
+  </div>
+
+  <h2>Arquitetura de Orquestracao</h2>
+  <div class='arch'>
+    <div class='flow'>
+      <div class='box'>Airflow<br/><span class='muted'>DAG prod ativa<br/>DAG dev pausada</span></div>
+      <div class='arrow'>→</div>
+      <div class='box'>Databricks Jobs<br/><span class='muted'>open_meteo_prod / open_meteo_dev</span></div>
+      <div class='arrow'>→</div>
+      <div class='box'>DLT Pipeline<br/><span class='muted'>Open Meteo ETL Pipeline</span></div>
+    </div>
+    <div class='flow'>
+      <div class='box'>Bronze<br/><span class='muted'>raw_*</span></div>
+      <div class='arrow'>→</div>
+      <div class='box'>Silver<br/><span class='muted'>cleaned_*</span></div>
+      <div class='arrow'>→</div>
+      <div class='box'>Analytics/Consumo<br/><span class='muted'>Dashboards/queries</span></div>
+    </div>
+  </div>
+
+  <h2>Jobs Open Meteo</h2>
+  <table>
+    <thead><tr><th>Nome</th><th>Ambiente</th><th>Job ID</th><th>Max Concurrent Runs</th></tr></thead>
+    <tbody>
+      <tr><td>open_meteo_prod</td><td>prod</td><td>47357426867496</td><td>1</td></tr>
+<tr><td>[dev delacortearthur] open_meteo_dev</td><td>dev</td><td>104751199505011</td><td>4</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Pipelines Open Meteo</h2>
+  <table>
+    <thead><tr><th>Pipeline</th><th>Estado</th><th>Ultimo Update</th><th>Pipeline ID</th></tr></thead>
+    <tbody>
+      <tr><td>[dev delacortearthur] Open Meteo ETL Pipeline</td><td>IDLE</td><td>COMPLETED</td><td>1b671ff4-3aad-421b-bb68-b99337aa3ea5</td></tr>
+<tr><td>Open Meteo ETL Pipeline</td><td>IDLE</td><td>COMPLETED</td><td>f127e9a0-765d-4be7-8d62-7961dbb1493a</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Historico Recente de Runs</h2>
+  <div class='two'>
+    <div>
+      <h3>PROD</h3>
+      <table>
+        <thead><tr><th>Run ID</th><th>Status</th><th>Trigger</th><th>Duracao</th><th>Inicio</th></tr></thead>
+        <tbody><tr><td>901989964606205</td><td>SUCCESS</td><td>ONE_TIME</td><td>174 s</td><td>2026-05-07 16:24:09</td></tr>
+<tr><td>180339431402297</td><td>SUCCESS</td><td>ONE_TIME</td><td>127 s</td><td>2026-05-07 16:10:30</td></tr>
+<tr><td>768190970697897</td><td>SUCCESS</td><td>ONE_TIME</td><td>181 s</td><td>2026-05-07 16:07:21</td></tr>
+<tr><td>523808305842226</td><td>SUCCESS</td><td>ONE_TIME</td><td>184 s</td><td>2026-05-07 15:44:11</td></tr>
+<tr><td>670738117377751</td><td>SUCCESS</td><td>ONE_TIME</td><td>111 s</td><td>2026-05-07 15:36:58</td></tr>
+<tr><td>994260598299797</td><td>SUCCESS</td><td>ONE_TIME</td><td>159 s</td><td>2026-05-07 15:33:50</td></tr>
+<tr><td>908571624395207</td><td>SUCCESS</td><td>ONE_TIME</td><td>207 s</td><td>2026-04-29 04:00:07</td></tr>
+<tr><td>527567449179405</td><td>SUCCESS</td><td>ONE_TIME</td><td>270 s</td><td>2026-04-28 04:00:05</td></tr></tbody>
+      </table>
+    </div>
+    <div>
+      <h3>DEV</h3>
+      <table>
+        <thead><tr><th>Run ID</th><th>Status</th><th>Trigger</th><th>Duracao</th><th>Inicio</th></tr></thead>
+        <tbody><tr><td>706945242711418</td><td>SUCCESS</td><td>ONE_TIME</td><td>287 s</td><td>2026-04-29 04:00:07</td></tr>
+<tr><td>771064370147642</td><td>FAILED</td><td>ONE_TIME</td><td>216 s</td><td>2026-04-28 04:00:05</td></tr>
+<tr><td>1036392149970680</td><td>SUCCESS</td><td>ONE_TIME</td><td>202 s</td><td>2026-04-27 12:16:09</td></tr>
+<tr><td>778022596690326</td><td>SUCCESS</td><td>ONE_TIME</td><td>289 s</td><td>2026-04-27 04:00:03</td></tr>
+<tr><td>720554278156785</td><td>SUCCESS</td><td>ONE_TIME</td><td>223 s</td><td>2026-04-26 23:57:23</td></tr>
+<tr><td>903973969320588</td><td>SUCCESS</td><td>ONE_TIME</td><td>331 s</td><td>2026-04-26 05:58:30</td></tr>
+<tr><td>255177164417155</td><td>SUCCESS</td><td>ONE_TIME</td><td>225 s</td><td>2026-04-26 05:58:14</td></tr>
+<tr><td>1078132760849396</td><td>SUCCESS</td><td>ONE_TIME</td><td>254 s</td><td>2026-04-24 14:15:25</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

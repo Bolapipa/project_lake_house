@@ -15,6 +15,54 @@ O projeto coleta dados de **5 endpoints diferentes** da API:
 
 ---
 
+## Galeria Visual (Airflow + GitHub)
+
+As imagens abaixo foram capturadas em **07/05/2026** para documentar os pontos mais importantes do projeto de forma visual e didatica.
+
+### 1) Airflow - Home da plataforma
+
+![Airflow Home](docs/images/linkedin/airflow_home.png)
+
+**O que mostra:** saude dos componentes (`MetaDatabase`, `Scheduler`, `Triggerer`, `Dag Processor`) e historico de execucoes com predominio de sucesso.
+
+### 2) Airflow - Overview da DAG de producao
+
+![Airflow DAG Overview](docs/images/linkedin/airflow_dag_prod.png)
+
+**O que mostra:** DAG `open_meteo_databricks_prod` ativa, com `max_active_runs=1`, `latest run` com sucesso e visao geral de estabilidade.
+
+### 3) Airflow - Historico de runs da DAG de producao
+
+![Airflow DAG Runs](docs/images/linkedin/airflow_dag_runs_prod.png)
+
+**O que mostra:** execucoes manuais e agendadas com status `Success`, incluindo os testes finais de validacao da orquestracao.
+
+### 4) GitHub - Visao do repositorio
+
+![GitHub Repository](docs/images/linkedin/github_repo.png)
+
+**O que mostra:** estrutura do `project_lake_house` e ultimo commit relacionado ao Airflow no dominio `open_meteo`.
+
+### 5) GitHub - Pull Request de sincronizacao
+
+![GitHub Pull Request](docs/images/linkedin/github_pr_33.png)
+
+**O que mostra:** PR `#33` (`prod -> dev`) com descricao tecnica das mudancas de orquestracao Airflow.
+
+### 6) GitHub Actions - Pipeline de CI/CD do open_meteo
+
+![GitHub Actions](docs/images/linkedin/github_actions_open_meteo.png)
+
+**O que mostra:** historico de execucoes do workflow `CI/CD open_meteo`, reforcando rastreabilidade e governanca de deploy.
+
+### 7) Databricks - Jobs + Arquitetura (snapshot visual)
+
+![Databricks Snapshot Visual](docs/images/linkedin/databricks_visual_report.png)
+
+**O que mostra:** visao consolidada (com dados reais da API Databricks) de jobs open_meteo, pipelines, historico de runs (PROD/DEV) e arquitetura de orquestracao ponta a ponta.
+Detalhamento complementar: `open_meteo/docs/databricks_visual.md`.
+
+---
 ## Arquitetura do Projeto
 
 ### Estrutura de Diretórios
@@ -925,3 +973,5 @@ notebook_params={
 **Versão**: 3.0 - Documentação expandida com variáveis, queries e métricas  
 **Mantido por**: delacortearthur@gmail.com  
 **Orquestração**: Apache Airflow (externo)
+
+
