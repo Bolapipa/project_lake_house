@@ -150,8 +150,10 @@ Sempre que adicionar novas fotos em `C:\Users\Arthur\Desktop\project_data_lake`,
 | `asset_bundle_carros.png` | ![asset bundle carros](docs/images/project_data_lake/asset_bundle_carros.png) |
 | `asset_bundle_pokemon.png` | ![asset bundle pokemon](docs/images/project_data_lake/asset_bundle_pokemon.png) |
 | `camara_deputados_prod.png` | ![camara deputados prod](docs/images/project_data_lake/camara_deputados_prod.png) |
+| `camara_deputados_prod_run.png` | ![camara deputados prod run](docs/images/project_data_lake/camara_deputados_prod_run.png) |
 | `carros_dev.png` | ![carros dev](docs/images/project_data_lake/carros_dev.png) |
 | `carros_prod.png` | ![carros prod](docs/images/project_data_lake/carros_prod.png) |
+| `carros_prod_timeline.png` | ![carros prod timeline](docs/images/project_data_lake/carros_prod_timeline.png) |
 | `catalog.png` | ![catalog](docs/images/project_data_lake/catalog.png) |
 | `databricks_job_execucao_recente.png` | ![databricks job execucao recente](docs/images/project_data_lake/databricks_job_execucao_recente.png) |
 | `ibge_prod.png` | ![ibge prod](docs/images/project_data_lake/ibge_prod.png) |
