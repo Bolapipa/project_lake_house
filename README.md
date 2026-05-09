@@ -2,9 +2,9 @@
 
 ## Visão Geral
 
-O **Project Lake House** é um projeto educacional e de portfólio voltado para Engenharia de Dados, implementado no Databricks. O objetivo é demonstrar de forma prática e didática a construção de uma arquitetura moderna de dados, desde a ingestão de múltiplas fontes externas até a transformação e modelagem analítica.
+O **Project Lake House** é um projeto educacional de Engenharia de Dados construído no Databricks. A proposta é mostrar, de ponta a ponta, como sair da ingestão de fontes externas e chegar em dados organizados para análise.
 
-Este projeto foi desenvolvido para ajudar qualquer pessoa interessada em aprender conceitos fundamentais de Data Engineering, com foco em:
+A proposta aqui é servir como material prático para quem quer estudar fundamentos de Data Engineering, com foco em:
 
 - Arquitetura Medalhão (Bronze, Silver, Gold)
 - Ingestão incremental e controle de estado
@@ -34,43 +34,43 @@ Tudo foi construído pensando em ser legível, escalável e fácil de entender, 
 
 ## Galeria Visual Geral (Airflow + GitHub + Databricks)
 
-Esta secao centraliza os principais registros visuais do projeto para facilitar leitura tecnica e apresentacao (ex.: portfolio e LinkedIn).
+Esta seção centraliza os principais registros visuais do projeto para facilitar a leitura técnica e a apresentação (ex.: portfólio e LinkedIn).
 
-### 1) Repositorio no GitHub
+### 1) Repositório no GitHub
 
 ![GitHub Repository](open_meteo/docs/images/linkedin/github_repo.png)
 
-**O que mostra:** estrutura geral do repositorio, branch ativa e ultimo commit relevante.
+**O que mostra:** estrutura geral do repositório, branch ativa e último commit relevante.
 
-### 2) Pull Request tecnico consolidando ajustes
+### 2) Pull Request técnico consolidando ajustes
 
 ![GitHub Pull Request](open_meteo/docs/images/linkedin/github_pr_33.png)
 
-**O que mostra:** PR com descricao tecnica das mudancas de orquestracao e documentacao.
+**O que mostra:** PR com descrição técnica das mudanças de orquestração e documentação.
 
 ### 3) Pipeline de CI/CD no GitHub Actions
 
 ![GitHub Actions](open_meteo/docs/images/linkedin/github_actions_open_meteo.png)
 
-**O que mostra:** historico de execucoes do workflow `open_meteo-ci-cd.yml`.
+**O que mostra:** histórico de execuções do workflow `open_meteo-ci-cd.yml`.
 
-### 4) Airflow - Visao geral da plataforma
+### 4) Airflow - Visão geral da plataforma
 
 ![Airflow Home](open_meteo/docs/images/linkedin/airflow_home.png)
 
-**O que mostra:** saude dos componentes, status de dags e historico de execucoes.
+**O que mostra:** saúde dos componentes, status de dags e histórico de execuções.
 
-### 5) Airflow - DAG de producao (overview)
+### 5) Airflow - DAG de produção (overview)
 
 ![Airflow DAG Overview](open_meteo/docs/images/linkedin/airflow_dag_prod.png)
 
 **O que mostra:** DAG `open_meteo_databricks_prod` ativa e monitorada.
 
-### 6) Airflow - Historico de runs da DAG de producao
+### 6) Airflow - Histórico de runs da DAG de produção
 
 ![Airflow DAG Runs](open_meteo/docs/images/linkedin/airflow_dag_runs_prod.png)
 
-**O que mostra:** execucoes recentes com rastreabilidade de sucesso.
+**O que mostra:** execuções recentes com rastreabilidade de sucesso.
 
 ### 7) Databricks - Jobs + Arquitetura (snapshot visual)
 
@@ -84,25 +84,25 @@ Esta secao centraliza os principais registros visuais do projeto para facilitar 
 
 ![Workspace Root](docs/images/project_data_lake/workspace_root.png)
 
-**O que mostra:** estrutura inicial do workspace com o repositorio `project_lake_house` vinculado.
+**O que mostra:** estrutura inicial do workspace com o repositório `project_lake_house` vinculado.
 
-### 9) Workspace - repositorio `project_lake_house`
+### 9) Workspace - repositório `project_lake_house`
 
 ![Workspace Repo](docs/images/project_data_lake/workspace_repo.png)
 
-**O que mostra:** visao interna do repositorio no Databricks Repos com os dominios de dados.
+**O que mostra:** visão interna do repositório no Databricks Repos com os domínios de dados.
 
-### 10) Job `carros_dev` - execucoes e tasks
+### 10) Job `carros_dev` - execuções e tasks
 
 ![Job Carros Dev](docs/images/project_data_lake/carros_dev.png)
 
-**O que mostra:** painel de runs, tasks, detalhes do job, parametros e compute serverless.
+**O que mostra:** painel de runs, tasks, detalhes do job, parâmetros e compute serverless.
 
-### 11) Job `pokemon_dev` - execucoes e tasks
+### 11) Job `pokemon_dev` - execuções e tasks
 
 ![Job Pokemon Dev](docs/images/project_data_lake/pokemon_dev.png)
 
-**O que mostra:** histórico de execucoes do bundle pokemon com detalhamento por task.
+**O que mostra:** histórico de execuções do bundle pokemon com detalhamento por task.
 
 ### 12) Bundle `carros` dentro do workspace
 
@@ -116,18 +116,65 @@ Esta secao centraliza os principais registros visuais do projeto para facilitar 
 
 **O que mostra:** estrutura de pastas/arquivos do asset bundle `pokemon` no Databricks.
 
-### Mapa rapido por dominio
+### 14) Unity Catalog - visão de catálogos e schemas
 
-- `carros`: ingestao de dados da Tabela FIPE.
-- `pokemon`: ingestao e modelagem de dados da PokeAPI.
-- `ibge`: ingestao de divisao territorial oficial do Brasil.
-- `open_meteo`: ingestao meteorologica, DLT e orquestracao externa via Airflow.
-- `camara_deputados`: ingestao de dados politicos (deputados, partidos, despesas, votacoes).
+![Databricks Catalog](docs/images/project_data_lake/catalog.png)
+
+**O que mostra:** navegação no Catalog Explorer com os catálogos por ambiente e os schemas dos domínios do projeto.
+
+### 15) Workflows - jobs e pipelines no Databricks
+
+![Databricks Jobs and Pipelines](docs/images/project_data_lake/jobs_pipelines.png)
+
+**O que mostra:** lista consolidada dos workflows (jobs e DLT pipelines), facilitando validação de governança e organização operacional.
+
+### 16) Job Databricks - execução mais recente
+
+![Databricks Job Open Meteo Prod](docs/images/project_data_lake/open_meteo_prod.png)
+
+**O que mostra:** painel de execução mais recente de job no Databricks, com status de run, trilha de monitoramento e contexto operacional do ambiente.
+
+### Atualizacao de imagens do `project_data_lake`
+
+Sempre que adicionar novas fotos em `C:\Users\Arthur\Desktop\project_data_lake`, execute:
+
+`powershell -ExecutionPolicy Bypass -File scripts/sync_project_data_lake_images.ps1`
+
+<!-- START:PROJECT_DATA_LAKE_IMAGES -->
+### Galeria automatica - project_data_lake
+
+> Bloco atualizado automaticamente por `scripts/sync_project_data_lake_images.ps1`.
+
+| Arquivo | Preview |
+| --- | --- |
+| `asset_bundle_carros.png` | ![asset bundle carros](docs/images/project_data_lake/asset_bundle_carros.png) |
+| `asset_bundle_pokemon.png` | ![asset bundle pokemon](docs/images/project_data_lake/asset_bundle_pokemon.png) |
+| `camara_deputados_prod.png` | ![camara deputados prod](docs/images/project_data_lake/camara_deputados_prod.png) |
+| `carros_dev.png` | ![carros dev](docs/images/project_data_lake/carros_dev.png) |
+| `carros_prod.png` | ![carros prod](docs/images/project_data_lake/carros_prod.png) |
+| `catalog.png` | ![catalog](docs/images/project_data_lake/catalog.png) |
+| `databricks_job_execucao_recente.png` | ![databricks job execucao recente](docs/images/project_data_lake/databricks_job_execucao_recente.png) |
+| `ibge_prod.png` | ![ibge prod](docs/images/project_data_lake/ibge_prod.png) |
+| `jobs_pipelines.png` | ![jobs pipelines](docs/images/project_data_lake/jobs_pipelines.png) |
+| `open_meteo_prod.png` | ![open meteo prod](docs/images/project_data_lake/open_meteo_prod.png) |
+| `pokemon_dev.png` | ![pokemon dev](docs/images/project_data_lake/pokemon_dev.png) |
+| `pokemon_prod.png` | ![pokemon prod](docs/images/project_data_lake/pokemon_prod.png) |
+| `workspace_repo.png` | ![workspace repo](docs/images/project_data_lake/workspace_repo.png) |
+| `workspace_root.png` | ![workspace root](docs/images/project_data_lake/workspace_root.png) |
+
+<!-- END:PROJECT_DATA_LAKE_IMAGES -->
+### Mapa rápido por domínio
+
+- `carros`: ingestão de dados da Tabela FIPE.
+- `pokemon`: ingestão e modelagem de dados da PokeAPI.
+- `ibge`: ingestão de divisão territorial oficial do Brasil.
+- `open_meteo`: ingestão meteorológica, DLT e orquestração externa via Airflow.
+- `camara_deputados`: ingestão de dados políticos (deputados, partidos, despesas, votações).
 
 ### Onde aprofundar cada parte
 
-- Visao detalhada do Open Meteo: `open_meteo/README.md`
-- Stack de orquestracao Airflow: `open_meteo/airflow/README.md`
+- Visão detalhada do Open Meteo: `open_meteo/README.md`
+- Stack de orquestração Airflow: `open_meteo/airflow/README.md`
 - Material visual Databricks: `open_meteo/docs/databricks_visual.md`
 - Roteiro pronto para post: `open_meteo/docs/linkedin_post.md`
 
