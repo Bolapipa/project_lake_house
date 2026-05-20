@@ -221,11 +221,47 @@ O projeto segue a **Arquitetura Medalhão**, que organiza os dados em três cama
 **Propósito**: Modelagem dimensional para consumo analítico e business intelligence.
 
 **Características**:
-- Modelagem dimensional (Star Schema)
+- Modelagem dimensional (Star Schema / Kimball)
 - Tabelas de fatos e dimensões
+- Surrogate keys (chaves substitutas) com xxhash64()
 - Agregações e métricas de negócio
-- Otimizações para performance
-- Tabelas prefixadas com `dim_` (dimensões) ou `fato_` (fatos)
+- Otimizações para performance (Liquid Clustering, Auto Optimize)
+- Quality constraints com `EXPECT ... ON VIOLATION DROP ROW`
+- Materialized Views (DLT) para refresh automático
+- Tabelas prefixadas com `dim_` (dimensões) ou `fact_` (fatos)
+
+**Status da Implementação**:
+-  **Câmara dos Deputados**: 6 dimensões + 2 fatos (completo)
+-  **IBGE**: 5 dimensões hierárquicas (completo)
+-  **Open Meteo**: 2 dimensões + 3 fatos (completo)
+-  **Pokémon**: 6 dimensões + 2 bridge tables (completo)
+-  **Carros**: 4 dimensões + 1 fato (em desenvolvimento)
+
+**Notebooks DLT Gold Criados**:
+1. `camara_deputados/src/dlt_camara_deputados_gold.sql` - Star Schema política
+2. `ibge/src/dlt_ibge_gold.sql` - Hierarquia geográfica
+3. `open_meteo/src/dlt_open_meteo_gold.sql` - Dados meteorológicos dimensionais
+4. `pokemon/src/dlt_pokemon_gold.sql` - Modelo dimensional Pokémon
+5. `carros/src/dlt_carros_gold.sql` - Modelo FIPE dimensional (em desenvolvimento)
+
+**Padrões Técnicos Implementados**:
+- **Surrogate Keys**: Geradas com `xxhash64(CAST(id AS STRING))` para garantir unicidade
+- **Variáveis DLT**: Uso de `${silver_catalog}` para referenciar origem Silver
+- **Clustering Automático**: `CLUSTER BY AUTO` para otimização de queries
+- **Auto Optimize**: Delta Lake otimização de escrita e compactação automática
+- **Quality Constraints**: Validações com `EXPECT` para garantir qualidade
+- **Documentação Inline**: Comments em todas as colunas e tabelas
+
+**Catálogos**:
+- `gold_dev` (Desenvolvimento) - 31 tabelas criadas
+- `gold_prod` (Produção) - 31 tabelas criadas
+
+**Schemas (Data Marts)**:
+- `dm_camara_deputados` - 8 tabelas (6 dims + 2 facts)
+- `dm_ibge` - 5 tabelas (5 dims hierárquicas)
+- `dm_open_meteo` - 5 tabelas (2 dims + 3 facts)
+- `dm_pokemon` - 8 tabelas (6 dims + 2 bridges)
+- `dm_carros` - 5 tabelas (4 dims + 1 fact) [em desenvolvimento]
 
 **Catálogos**:
 - `gold_dev` (Desenvolvimento)
@@ -245,113 +281,46 @@ Exemplos:
 - bronze_dev / bronze_prod
 - silver_dev / silver_prod
 - gold_dev / gold_prod
-```
-
-**Schemas**:
-```
-ds_{dominio}  - Para Bronze e Silver (data source)
-dm_{dominio}  - Para Gold (data mart)
-
-Exemplos:
-- ds_carros
-- ds_pokemon
-- ds_ibge
-- ds_open_meteo
-- ds_camara_deputados
-```
-
-**Tabelas**:
-```
-Bronze:  raw_{entidade}
-Silver:  cleaned_{entidade} ou tb_{entidade}
-Gold:    dim_{dimensao} ou fato_{metrica}
-```
-
-### Hierarquia Atual de Dados
-
-```
-bronze_dev / bronze_prod
-├── ds_carros (Tabela FIPE)
-│   ├── controle_anos
-│   ├── raw_anos
-│   ├── raw_fipe
-│   ├── raw_marcas
-│   ├── raw_modelos
-│   ├── raw_referencias
-│   └── tabela_controle
+├── dm_camara_deputados (Câmara dos Deputados - Star Schema Política)
+│   ├── dim_deputado (Deputados federais)
+│   ├── dim_partido (Partidos políticos)
+│   ├── dim_tempo (Calendário temporal)
+│   ├── dim_tipo_despesa (Tipos de despesas parlamentares)
+│   ├── dim_fornecedor (Fornecedores)
+│   ├── dim_orgao (Órgãos legislativos - Plenário/Comissões)
+│   ├── fact_despesas (Despesas da cota parlamentar)
+│   └── fact_votacoes (Votações em Plenário e Comissões)
 │
-├── ds_pokemon (PokeAPI)
-│   ├── controle_ingestao
-│   ├── raw_pokemon_name
-│   ├── raw_pokemon_number_dex
-│   ├── raw_pokemon_abilities
-│   ├── raw_pokemon_characteristics
-│   ├── raw_pokemon_egg_groups
-│   ├── raw_pokemon_genders
-│   ├── raw_pokemon_growth_rates
-│   ├── raw_pokemon_items
-│   ├── raw_pokemon_location_areas
-│   ├── raw_pokemon_natures
-│   ├── raw_pokemon_pokeathlon_stats
-│   ├── raw_pokemon_versions
-│   ├── raw_items
-│   ├── raw_item_attributes
-│   ├── raw_items_attributes
-│   └── raw_locations
+├── dm_ibge (IBGE - Hierarquia Geográfica do Brasil)
+│   ├── dim_regiao (5 macroregiões)
+│   ├── dim_estado (27 estados + DF)
+│   ├── dim_municipio (5.570 municípios com hierarquia completa)
+│   ├── dim_distrito (Distritos)
+│   └── dim_subdistrito (Subdistritos)
 │
-├── ds_ibge (API IBGE Localidades)
-│   ├── raw_regioes
-│   ├── raw_ufs
-│   ├── raw_mesorregioes
-│   ├── raw_microrregioes
-│   ├── raw_regioes_intermediarias
-│   ├── raw_regioes_imediatas
-│   ├── raw_municipios
-│   ├── raw_distritos
-│   ├── raw_subdistritos
-│   ├── raw_regioes_metropolitanas
-│   ├── raw_aglomeracoes_urbanas
-│   └── raw_regioes_integradas_desenvolvimento
+├── dm_open_meteo (Open Meteo - Dados Meteorológicos Dimensionais)
+│   ├── dim_localidade (27 capitais brasileiras)
+│   ├── dim_tempo_meteo (Calendário temporal meteorológico)
+│   ├── fact_historical_weather (Dados históricos de temperatura/precipitação)
+│   ├── fact_air_quality (Índices de qualidade do ar)
+│   └── fact_daily_forecast (Previsão diária do tempo)
 │
-├── ds_open_meteo (Open-Meteo API)
-│   ├── auxiliar_localidades
-│   ├── tabela_controle
-│   ├── raw_geocoding_localidades
-│   ├── raw_historical_weather
-│   ├── raw_air_quality
-│   └── raw_daily_forecast
+├── dm_pokemon (Pokémon - Modelo Dimensional PokeAPI)
+│   ├── dim_pokemon (Pokémon com atributos)
+│   ├── dim_ability (Habilidades)
+│   ├── dim_nature (Naturezas)
+│   ├── dim_growth_rate (Taxas de crescimento)
+│   ├── dim_item (Itens do jogo)
+│   ├── dim_location (Localizações)
+│   ├── bridge_pokemon_ability (Relacionamento N:N Pokémon-Habilidades)
+│   └── bridge_pokemon_type (Relacionamento N:N Pokémon-Tipos)
 │
-└── ds_camara_deputados (API Câmara dos Deputados)
-    ├── controle_ingestao
-    ├── raw_deputados
-    ├── raw_partidos
-    └── raw_despesas
-
-silver_dev / silver_prod
-├── ds_ibge
-│   ├── cleaned_regioes
-│   ├── cleaned_estados
-│   ├── cleaned_mesorregioes
-│   ├── cleaned_microrregioes
-│   ├── cleaned_regioes_intermediarias
-│   ├── cleaned_regioes_imediatas
-│   ├── cleaned_municipios
-│   ├── cleaned_distritos
-│   ├── cleaned_subdistritos
-│   ├── cleaned_regioes_metropolitanas
-│   ├── cleaned_aglomeracoes_urbanas
-│   └── cleaned_regioes_integradas_desenvolvimento
-│
-└── ds_open_meteo
-    ├── cleaned_localidades
-    ├── cleaned_geocoding_localidades
-    ├── cleaned_historical_weather
-    ├── cleaned_air_quality
-    └── cleaned_daily_forecast
-
-gold_dev / gold_prod
-└── ds_carros (em desenvolvimento)
-```
+└── dm_carros (Carros - Tabela FIPE Dimensional) [em desenvolvimento]
+    ├── dim_marca (Marcas de veículos)
+    ├── dim_modelo (Modelos por marca)
+    ├── dim_ano_modelo (Anos/versões)
+    ├── dim_tempo_fipe (Meses de referência)
+    └── fact_preco_fipe (Preços médios de veículos)
 
 ---
 
