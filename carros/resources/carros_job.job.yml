@@ -89,3 +89,10 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.carros_pipeline_silver.id}
           max_retries: 1
+        # Refresh do Pipeline DLT Gold (Silver → Gold)
+        - task_key: refresh_gold_pipeline
+          depends_on:
+            - task_key: refresh_pipeline_silver
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.carros_gold_pipeline.id}
+          max_retries: 1
