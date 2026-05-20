@@ -84,3 +84,10 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.open_meteo_pipeline.id}
           max_retries: 1
+
+        - task_key: refresh_gold_pipeline
+          depends_on:
+            - task_key: refresh_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.open_meteo_gold_pipeline.id}
+          max_retries: 1

@@ -1,0 +1,27 @@
+resources:
+  pipelines:
+    carros_gold_pipeline:
+      name: 'Carros Gold Pipeline'
+      
+      # Destino: catálogo e schema GOLD
+      catalog: gold_${var.environment}
+      schema: dm_carros
+      
+      libraries:
+        - notebook:
+            path: ../src/dlt_carros_gold.sql
+      
+      # Variáveis de ambiente para referenciar Silver correto
+      configuration:
+        environment: ${var.environment}
+        silver_catalog: ${var.silver_catalog}
+      
+      serverless: true
+      continuous: false
+      development: ${var.pipeline_development}
+      photon: true
+      channel: current
+      
+      permissions:
+        - level: CAN_VIEW
+          group_name: 'users'
