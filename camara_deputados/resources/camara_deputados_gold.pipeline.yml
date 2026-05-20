@@ -11,9 +11,10 @@ resources:
         - notebook:
             path: ../src/dlt_camara_deputados_gold.sql
       
-      # Variável de ambiente para referenciar Silver correto
+      # Variáveis de ambiente para referenciar Silver correto
       configuration:
         environment: ${var.environment}
+        silver_catalog: ${var.silver_catalog}
       
       serverless: true
       continuous: false
