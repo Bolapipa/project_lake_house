@@ -9,7 +9,7 @@ resources:
       
       libraries:
         - notebook:
-            path: ../src/dlt_camara_deputados_gold.sql.ipynb
+            path: ../src/dlt_camara_deputados_gold.sql
       
       # Variáveis de ambiente para referenciar Silver correto
       configuration:
