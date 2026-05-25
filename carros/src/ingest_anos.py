@@ -4,9 +4,7 @@
 # environment_version = "4"
 # ///
 # DBTITLE 1,Cell 1: Corrige comparação de tipos
-# ==============================
 # WIDGETS
-# ==============================
 dbutils.widgets.text("catalog", "bronze_prod")
 used_catalog = dbutils.widgets.get("catalog")
 
@@ -27,17 +25,13 @@ print("Tabela destino:", tabela_destino)
 print("Tabela controle:", tabela_controle)
 print("Tamanho do lote de marcas:", batch_marcas)
 
-# ==============================
 # IMPORTS
-# ==============================
 import requests
 import pandas as pd
 import time
 from pyspark.sql.functions import current_timestamp, col
 
-# ==============================
 # TOKEN
-# ==============================
 token_api = dbutils.secrets.get(scope="carros", key="fipe-token")
 
 headers = {
@@ -48,9 +42,7 @@ headers = {
 session = requests.Session()
 session.headers.update(headers)
 
-# ==============================
 # GARANTE LINHA NA TABELA CONTROLE
-# ==============================
 ctrl_exist = spark.sql(f"""
     SELECT COUNT(*) AS qtd
     FROM {tabela_controle}
@@ -64,9 +56,7 @@ if ctrl_exist == 0:
     """)
     print("Linha inicial criada na tabela controle.")
 
-# ==============================
 # LÊ O CONTROLE
-# ==============================
 ctrl = spark.sql(f"""
     SELECT ultimo_id, status
     FROM {tabela_controle}
@@ -83,17 +73,13 @@ else:
 print(f"Último id processado no controle: {ultimo_id_processado}")
 print(f"Status atual no controle: {status_atual}")
 
-# ==============================
 # DEFINE FILTRO DAS MARCAS
-# ==============================
 if status_atual in ("RATE_LIMIT", "ERRO"):
     filtro_marcas = col("id_marca") >= ultimo_id_processado
 else:
     filtro_marcas = col("id_marca") > ultimo_id_processado
 
-# ==============================
 # BUSCA MARCAS A PROCESSAR
-# ==============================
 df_marcas = (
     spark.table(tabela_modelos)
     .select("id_marca", "nome_marca")
@@ -124,9 +110,7 @@ else:
 
     print(f"Processando marcas de {marca_inicio} até {marca_fim}")
 
-    # ==============================
     # MODELOS DA(S) MARCA(S) DO LOTE
-    # ==============================
     df_modelos_lote = (
         spark.table(tabela_modelos)
         .select("id_marca", "id_modelo", "nome_marca", "nome_modelo")
@@ -144,9 +128,7 @@ else:
     houve_erro = False
     interromper_lote = False
 
-    # ==============================
     # PROCESSA CADA MODELO
-    # ==============================
     for i, modelo in enumerate(modelos_lote, start=1):
         if interromper_lote:
             break
@@ -210,9 +192,7 @@ else:
             print("Rate limit detectado. Interrompendo o lote para retomar depois.")
             break
 
-    # ==============================
     # SALVA RESULTADO
-    # ==============================
     if all_rows:
         pdf = pd.DataFrame(all_rows)
 
@@ -234,9 +214,7 @@ else:
     else:
         print("Nenhum dado retornado neste lote.")
 
-    # ==============================
     # STATUS FINAL
-    # ==============================
     if houve_rate_limit:
         novo_status = "RATE_LIMIT"
         novo_ultimo_id = marca_inicio
@@ -250,9 +228,7 @@ else:
     print(f"Novo status: {novo_status}")
     print(f"Novo ultimo_id para controle: {novo_ultimo_id}")
 
-    # ==============================
     # ATUALIZA CONTROLE
-    # ==============================
     spark.sql(f"""
         UPDATE {tabela_controle}
         SET
@@ -263,3 +239,4 @@ else:
     """)
 
     print("Tabela de controle atualizada com sucesso.")
+
