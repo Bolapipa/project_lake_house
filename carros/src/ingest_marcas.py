@@ -14,17 +14,13 @@ import pandas as pd
 from pyspark.sql.functions import col, max as spark_max
 from datetime import datetime
 
-# ==============================
 # 1) CHAMA A API
-# ==============================
 url = "https://fipe.parallelum.com.br/api/v2/cars/brands"
 response = requests.get(url, timeout=30)
 response.raise_for_status()
 dados = response.json()
 
-# ==============================
 # 2) MONTA DATAFRAME NOVO
-# ==============================
 df_pandas = pd.DataFrame(dados)
 
 df_spark_novo = spark.createDataFrame(df_pandas).select(
@@ -34,9 +30,7 @@ df_spark_novo = spark.createDataFrame(df_pandas).select(
 
 display(df_spark_novo)
 
-# ==============================
 # 3) SE A TABELA NÃO EXISTE, CRIA
-# ==============================
 if not spark.catalog.tableExists(tabela_destino):
     df_spark_novo.write.format("delta") \
         .mode("overwrite") \
@@ -44,9 +38,7 @@ if not spark.catalog.tableExists(tabela_destino):
 
     print(f"Tabela criada e carga inicial realizada em: {tabela_destino}")
 
-# ==============================
 # 4) SE A TABELA JÁ EXISTE, INSERE SÓ NOVOS REGISTROS
-# ==============================
 else:
     df_existente = spark.table(tabela_destino).select("id_marca")
 
@@ -67,9 +59,7 @@ else:
     else:
         print("Nenhuma nova marca nova encontrada para inserir.")
 
-# ==============================
 # 5) ATUALIZA CONTROLE
-# ==============================
 ultimo_id = spark.table(tabela_destino) \
     .agg(spark_max("id_marca").alias("ultimo_id")) \
     .collect()[0]["ultimo_id"]
@@ -98,3 +88,4 @@ else:
         .saveAsTable(tabela_controle)
 
 print("Controle incremental atualizado para marcas.")
+
